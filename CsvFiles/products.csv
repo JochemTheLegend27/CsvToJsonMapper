@@ -1,0 +1,7 @@
+Id,Name,Category,FarmId,Price
+1,Tomatoes,Vegetable,1,2.5
+2,Cucumbers,Vegetable,2,1.8
+3,Carrots,Vegetable,1,3.0
+4,Apples,Fruit,3,4.2
+5,Bananas,Fruit,4,1.9
+6,Lettuce,Vegetable,4,2.3

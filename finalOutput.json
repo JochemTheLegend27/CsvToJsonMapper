@@ -1,0 +1,69 @@
+[
+  {
+    "FarmType": "Organic",
+    "TimestampCreated": "2024-01-01",
+    "FarmId": "1",
+    "FarmDetails": [
+      {
+        "Country": "USA",
+        "Name": "Sunny Farm",
+        "EmployeeCount": "12"
+      },
+      {
+        "Country": "Canada",
+        "Name": "Green Acres",
+        "EmployeeCount": "10"
+      },
+      {
+        "Country": "USA",
+        "Name": "Mountain Ridge",
+        "EmployeeCount": "8"
+      },
+      {
+        "Country": "Netherlands",
+        "Name": "Riverside Farms",
+        "EmployeeCount": "15"
+      }
+    ],
+    "Products": [
+      {
+        "ProductName": "Tomatoes",
+        "ProductCategory": "Vegetable",
+        "ProductPrice": "2.5"
+      },
+      {
+        "ProductName": "Cucumbers",
+        "ProductCategory": "Vegetable",
+        "ProductPrice": "1.8"
+      },
+      {
+        "ProductName": "Apples",
+        "ProductCategory": "Fruit",
+        "ProductPrice": "4.2"
+      },
+      {
+        "ProductName": "Bananas",
+        "ProductCategory": "Fruit",
+        "ProductPrice": "1.9"
+      }
+    ],
+    "Employees": [
+      {
+        "EmployeeName": "John Doe",
+        "EmployeePosition": "Manager"
+      },
+      {
+        "EmployeeName": "Jane Smith",
+        "EmployeePosition": "Worker"
+      },
+      {
+        "EmployeeName": "Emily Davis",
+        "EmployeePosition": "Worker"
+      },
+      {
+        "EmployeeName": "Michael Brown",
+        "EmployeePosition": "Manager"
+      }
+    ]
+  }
+]

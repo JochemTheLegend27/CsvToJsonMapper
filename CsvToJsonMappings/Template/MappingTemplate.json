@@ -1,0 +1,45 @@
+{
+  "Fields": [
+    {
+      "CSVField": "Column1",
+      "CSVFile": "file1.csv",
+      "JSONField": "Field1"
+    },
+    {
+      "CSVField": "Column2",
+      "CSVFile": "file2.csv",
+      "JSONField": "Field2"
+    }
+  ],
+  "NestedFields": [
+    {
+      "JSONNestedType": "Array", // array or object
+      "JSONNestedFieldName": "NestedField1",
+      "Fields": [
+        {
+          "CSVField": "Column3",
+          "CSVFile": "file1.csv",
+          "JSONField": "NestedField1_Field1"
+        },
+        {
+          "CSVField": "Column4",
+          "CSVFile": "file2.csv",
+          "JSONField": "NestedField1_Field2"
+        }
+      ],
+      "NestedFields": [
+        {
+          "JSONNestedType": "Object", // array or object
+          "JSONNestedFieldName": "NestedField2",
+          "Fields": [
+            {
+              "CSVField": "Column5",
+              "CSVFile": "file3.csv",
+              "JSONField": "NestedField2_Field1"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "cages": [
+    {
+      "cageId": "1",
+      "cageName": "Cage A",
+      "location": "Location 1",
+      "capacity": "100",
+      "pigs": [
+        {
+          "pigId": "1",
+          "name": "Pig A",
+          "age": "2",
+          "breed": "Type 1",
+          "weight": "150",
+          "offspring": [
+            {
+              "pigId": "1",
+              "name": "Offspring A",
+              "age": "0.5",
+              "breed": "Type 1",
+              "weight": "50"
+            },
+            {
+              "pigId": "2",
+              "name": "Offspring B",
+              "age": "0.5",
+              "breed": "Type 1",
+              "weight": "50"
+            },
+            {
+              "pigId": "3",
+              "name": "Offspring C",
+              "age": "0.5",
+              "breed": "Type 1",
+              "weight": "50"
+            }
+          ]
+        },
+        {
+          "pigId": "2",
+          "name": "Pig B",
+          "age": "2",
+          "breed": "Type 1",
+          "weight": "150",
+          "offspring": [
+            {
+              "pigId": "1",
+              "name": "Offspring A",
+              "age": "0.5",
+              "breed": "Type 1",
+              "weight": "50"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cageId": "2",
+      "cageName": "Cage B",
+      "location": "Location 2",
+      "capacity": "100",
+      "pigs": [
+        {
+          "pigId": "12",
+          "name": "Pig C",
+          "age": "2",
+          "breed": "Type 1",
+          "weight": "150",
+          "offspring": [
+            {
+              "pigId": "1",
+              "name": "Offspring A",
+              "age": "0.5",
+              "breed": "Type 1",
+              "weight": "50"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
