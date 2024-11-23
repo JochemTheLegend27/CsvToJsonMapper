@@ -5,24 +5,40 @@
     "FarmId": "1",
     "FarmDetails": [
       {
-        "Country": "USA",
         "Name": "Sunny Farm",
-        "EmployeeCount": "12"
-      },
-      {
-        "Country": "Canada",
-        "Name": "Green Acres",
-        "EmployeeCount": "10"
-      },
-      {
         "Country": "USA",
-        "Name": "Mountain Ridge",
-        "EmployeeCount": "8"
+        "FarmDetails": []
       },
       {
-        "Country": "Netherlands",
+        "Name": "Green Acres",
+        "Country": "Canada",
+        "FarmDetails": []
+      },
+      {
+        "Name": "Mountain Ridge",
+        "Country": "USA",
+        "FarmDetails": []
+      },
+      {
         "Name": "Riverside Farms",
-        "EmployeeCount": "15"
+        "Country": "Netherlands",
+        "FarmDetails": []
+      },
+      {
+        "EmployeeCount": "12",
+        "FarmDetails": []
+      },
+      {
+        "EmployeeCount": "10",
+        "FarmDetails": []
+      },
+      {
+        "EmployeeCount": "8",
+        "FarmDetails": []
+      },
+      {
+        "EmployeeCount": "15",
+        "FarmDetails": []
       }
     ],
     "Products": [
@@ -37,6 +53,11 @@
         "ProductPrice": "1.8"
       },
       {
+        "ProductName": "Carrots",
+        "ProductCategory": "Vegetable",
+        "ProductPrice": "3.0"
+      },
+      {
         "ProductName": "Apples",
         "ProductCategory": "Fruit",
         "ProductPrice": "4.2"
@@ -45,6 +66,11 @@
         "ProductName": "Bananas",
         "ProductCategory": "Fruit",
         "ProductPrice": "1.9"
+      },
+      {
+        "ProductName": "Lettuce",
+        "ProductCategory": "Vegetable",
+        "ProductPrice": "2.3"
       }
     ],
     "Employees": [
@@ -63,6 +89,10 @@
       {
         "EmployeeName": "Michael Brown",
         "EmployeePosition": "Manager"
+      },
+      {
+        "EmployeeName": "Lisa White",
+        "EmployeePosition": "Worker"
       }
     ]
   }
