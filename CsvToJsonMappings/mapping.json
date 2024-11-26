@@ -22,8 +22,8 @@
       "JSONNestedFieldName": "FarmDetails",
       "Fields": [
         {
-          "CSVField": "Name",
-          "CSVFile": "farms.csv",
+          "CSVField": "FarmName",
+          "CSVFile": "farmDetails.csv",
           "JSONField": "Name"
         },
         {
@@ -35,24 +35,6 @@
           "CSVField": "EmployeeCount",
           "CSVFile": "farmDetails.csv",
           "JSONField": "EmployeeCount"
-        }
-      ],
-      "NestedFields": [
-        {
-          "JSONNestedType": "Array",
-          "JSONNestedFieldName": "FarmEmployees",
-          "Fields": [
-            {
-              "CSVField": "Name",
-              "CSVFile": "farmEmployees.csv",
-              "JSONField": "EmployeeName"
-            },
-            {
-              "CSVField": "Position",
-              "CSVFile": "farmEmployees.csv",
-              "JSONField": "EmployeePosition"
-            }
-          ]
         }
       ]
     },
