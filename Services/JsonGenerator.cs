@@ -38,9 +38,6 @@ public static class JsonGenerator
                 continue;
             }
 
-            // TODO: HELP MET DENKEN - Hoe gaan we om met dit soort velden?, vraag aan het bedrijf??? 
-            // LOGICA hiervoor moet nog aangepast worden misschien???
-
             if (!csvData.ContainsKey(fieldMapping.CSVFile))
             {
                 throw new Exception($"CSV file '{fieldMapping.CSVFile}' is missing from the supplied data.");
@@ -48,7 +45,7 @@ public static class JsonGenerator
 
             var currentCsvData = csvData[fieldMapping.CSVFile];
 
-            // normal fields are fields that are the top player so they go based on the order of the csv data (count) (rarely used in agricultural examples)
+            // normal fields are fields that are the top layer so they go based on the order of the csv data (count)
             jsonObject[fieldMapping.JSONField] = currentCsvData[count][fieldMapping.CSVField];
 
         }
@@ -60,8 +57,51 @@ public static class JsonGenerator
 
             if (Enum.Parse<NestedType>(nestedField.JSONNestedType) == NestedType.Object)
             {
-                // OVERLEGGEN MET TEAM: Hoe doen we dit? en waar komt deze data vandaan? // in huidige templates is dit niet nodig.... maar msischien wilt het bedrijf dit wel
-                // TODO: Implementeer de verwerking van geneste objecten
+
+                var jsonObjectNested = new Dictionary<string, object>();
+
+                nestedField.Fields.ForEach(field =>
+                {
+                    if (field.JSONField == null)
+                    {
+                        throw new Exception($"JSON field missing in mapping for '{field.CSVField}'.");
+                    }
+
+                    if (field.CSVFile == null || field.CSVField == null)
+                    {
+                        logger.LogWarning($"CSV file or CSV field is missing from the mapping for '{field.JSONField}'.\nSo empty string added.");
+                        jsonObject[field.JSONField] = string.Empty;
+                    }
+                    else
+                    {
+
+                        if (!csvData.ContainsKey(field.CSVFile))
+                        {
+                            throw new Exception($"CSV file '{field.CSVFile}' is missing from the supplied data.");
+                        }
+
+                        var currentCsvData = csvData[field.CSVFile];
+
+
+                        // normal fields are fields that are the top layer so they go based on the order of the csv data (count)
+                        jsonObjectNested[field.JSONField] = currentCsvData[count][field.CSVField];
+                    }
+
+                });
+
+                if (nestedField.NestedFields.Count > 0)
+                {
+                    // Nested fields in nested fields is not supported 
+                    // in current templates this is not necessary.... but maybe the company wants it?
+                    logger.LogWarning("Nested fields in nested fields is not supported\nAdding empty arrays");
+                    foreach (var nested in nestedField.NestedFields)
+                    {
+                        jsonObjectNested[nested.JSONNestedFieldName] = new List<Dictionary<string, object>>();
+                    }
+                }
+
+                jsonObject[nestedField.JSONNestedFieldName] = jsonObjectNested;
+
             }
             else if (Enum.Parse<NestedType>(nestedField.JSONNestedType) == NestedType.Array)
             {
