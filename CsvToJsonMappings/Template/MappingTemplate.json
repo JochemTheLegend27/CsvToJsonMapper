@@ -3,12 +3,24 @@
     {
       "CSVField": "Column1",
       "CSVFile": "file1.csv",
-      "JSONField": "Field1"
+      "JSONField": "Field1",
+      "Validations": {
+        "Required": true,
+        "Type": "Int", // Any, String, Int, Double, Bool
+        "Min": 0,
+        "Max": 100
+      }
     },
     {
       "CSVField": "Column2",
       "CSVFile": "file2.csv",
-      "JSONField": "Field2"
+      "JSONField": "Field2",
+      "Validations": {
+        "Required": true,
+        "Type": "String",
+        "Min": null,
+        "Max": null
+      }
     }
   ],
   "NestedFields": [
@@ -19,12 +31,24 @@
         {
           "CSVField": "Column3",
           "CSVFile": "file1.csv",
-          "JSONField": "NestedField1_Field1"
+          "JSONField": "NestedField1_Field1",
+          "Validations": {
+            "Required": true,
+            "Type": "Double",
+            "Min": null,
+            "Max": null
+          }
         },
         {
           "CSVField": "Column4",
           "CSVFile": "file2.csv",
-          "JSONField": "NestedField1_Field2"
+          "JSONField": "NestedField1_Field2",
+          "Validations": {
+            "Required": true,
+            "Type": "Double",
+            "Min": null,
+            "Max": null
+          }
         }
       ],
       "NestedFields": [
@@ -35,7 +59,13 @@
             {
               "CSVField": "Column5",
               "CSVFile": "file3.csv",
-              "JSONField": "NestedField2_Field1"
+              "JSONField": "NestedField2_Field1",
+              "Validations": {
+                "Required": true,
+                "Type": "Bool",
+                "Min": null,
+                "Max": null
+              }
             }
           ]
         }

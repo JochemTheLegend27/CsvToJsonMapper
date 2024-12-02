@@ -3,17 +3,35 @@
     {
       "CSVField": "Type",
       "CSVFile": "farms.csv",
-      "JSONField": "FarmType"
+      "JSONField": "FarmType",
+      "Validations": {
+        "Required": true,
+        "Type": "String",
+        "Min": 0,
+        "Max": null
+      }
     },
     {
       "CSVField": "CreatedAt",
       "CSVFile": "farms.csv",
-      "JSONField": "TimestampCreated"
+      "JSONField": "TimestampCreated",
+      "Validations": {
+        "Required": true,
+        "Type": "String",
+        "Min": null,
+        "Max": null
+      }
     },
     {
       "CSVField": "Id",
       "CSVFile": "farms.csv",
-      "JSONField": "FarmId"
+      "JSONField": "FarmId",
+      "Validations":  {
+        "Required": true,
+        "Type": "Int",
+        "Min": 0,
+        "Max": 100
+      }
     }
   ],
   "NestedFields": [
@@ -24,17 +42,35 @@
         {
           "CSVField": "FarmName",
           "CSVFile": "farmDetails.csv",
-          "JSONField": "Name"
+          "JSONField": "Name",
+          "Validations": {
+            "Required": true,
+            "Type": "String",
+            "Min": 0,
+            "Max": 100
+          }
         },
         {
           "CSVField": "CountryOfOrigin",
           "CSVFile": "farms.csv",
-          "JSONField": "Country"
+          "JSONField": "Country",
+          "Validations": {
+            "Required": true,
+            "Type": "Bool",
+            "Min": 0,
+            "Max": 100
+          }
         },
         {
           "CSVField": "EmployeeCount",
           "CSVFile": "farmDetails.csv",
-          "JSONField": "EmployeeCount"
+          "JSONField": "EmployeeCount",
+          "Validations": {
+            "Required": true,
+            "Type": "Int",
+            "Min": null,
+            "Max": null
+          }
         }
       ]
     },
@@ -45,17 +81,35 @@
         {
           "CSVField": "Name",
           "CSVFile": "products.csv",
-          "JSONField": "ProductName"
+          "JSONField": "ProductName",
+          "Validations": {
+            "Required": true,
+            "Type": "String",
+            "Min": null,
+            "Max": null
+          }
         },
         {
           "CSVField": "Category",
           "CSVFile": "products.csv",
-          "JSONField": "ProductCategory"
+          "JSONField": "ProductCategory",
+          "Validations": {
+            "Required": true,
+            "Type": "String",
+            "Min": null,
+            "Max": null
+          }
         },
         {
           "CSVField": "Price",
           "CSVFile": "products.csv",
-          "JSONField": "ProductPrice"
+          "JSONField": "ProductPrice",
+          "Validations": {
+            "Required": true,
+            "Type": "Double",
+            "Min": null,
+            "Max": null
+          }
         }
       ]
     },
@@ -66,12 +120,24 @@
         {
           "CSVField": "Name",
           "CSVFile": "employees.csv",
-          "JSONField": "EmployeeName"
+          "JSONField": "EmployeeName",
+          "Validations": {
+            "Required": true,
+            "Type": "String",
+            "Min": null,
+            "Max": null
+          }
         },
         {
           "CSVField": "Position",
           "CSVFile": "employees.csv",
-          "JSONField": "EmployeePosition"
+          "JSONField": "EmployeePosition",
+          "Validations": {
+            "Required": true,
+            "Type": "String",
+            "Min": null,
+            "Max": null
+          }
         }
       ]
     }

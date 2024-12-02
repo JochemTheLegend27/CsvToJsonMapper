@@ -20,9 +20,9 @@ public static class CsvDataJoiner
     ///     - Each dictionary in this list corresponds to a record from the foreign CSV file that is related to the primary record via the specified foreign key.
     /// </returns>
 
-    public static Dictionary<string, List<Dictionary<string, object>>> JoinCsvDataBasedOnRelations(List<Relation> relations, Dictionary<string, List<Dictionary<string, string>>> csvData, ILogger logger)
+    public static Dictionary<string, List<Dictionary<string, object?>>> JoinCsvDataBasedOnRelations(List<Relation> relations, Dictionary<string, List<Dictionary<string, string?>>> csvData, ILogger logger)
     {
-        var result = new Dictionary<string, List<Dictionary<string, object>>>();
+        var result = new Dictionary<string, List<Dictionary<string, object?>>>();
 
         foreach (var relation in relations)
         {
@@ -47,7 +47,7 @@ public static class CsvDataJoiner
                 // Initialize the result for the PK file if not already present
                 if (!result.ContainsKey(primaryKeyFile))
                 {
-                    result[primaryKeyFile] = new List<Dictionary<string, object>>();
+                    result[primaryKeyFile] = new List<Dictionary<string, object?>>();
                 }
 
                 foreach (var pkRecord in primaryKeyData)
@@ -56,7 +56,7 @@ public static class CsvDataJoiner
                     // Create a new record if not found
                     var enrichedRecord = pkRecord.ToDictionary(
                         kvp => kvp.Key,
-                        kvp => (object)kvp.Value
+                        kvp => (object?)kvp.Value
                     );
                     result[primaryKeyFile].Add(enrichedRecord);
 
@@ -79,7 +79,7 @@ public static class CsvDataJoiner
                 // Initialize the result for the PK file if not already present
                 if (!result.ContainsKey(primaryKeyFile))
                 {
-                    result[primaryKeyFile] = new List<Dictionary<string, object>>();
+                    result[primaryKeyFile] = new List<Dictionary<string, object?>>();
                 }
 
                 // Create a lookup of FK records by foreign key value
@@ -96,14 +96,14 @@ public static class CsvDataJoiner
                     var pkValue = pkRecord[primaryKeyField];
 
                     // Check if a record with this PK already exists in the result
-                    var existingRecord = result[primaryKeyFile].FirstOrDefault(record => record[primaryKeyField].ToString() == pkValue);
+                    var existingRecord = result[primaryKeyFile].FirstOrDefault(record => record[primaryKeyField] == pkValue);
 
                     if (existingRecord == null)
                     {
                         // Create a new record if not found
                         var enrichedRecord = pkRecord.ToDictionary(
                             kvp => kvp.Key,
-                            kvp => (object)kvp.Value
+                            kvp => (object?)kvp.Value
                         );
 
                         // Add related FK records as a list (or empty if none found)
@@ -113,7 +113,7 @@ public static class CsvDataJoiner
                         }
                         else
                         {
-                            enrichedRecord[foreignKeyFile] = new List<Dictionary<string, string>>();
+                            enrichedRecord[foreignKeyFile] = new List<Dictionary<string, object?>>();
                             logger.LogWarning($"No FK records found for PK value: {pkValue}");
                         }
 
@@ -128,7 +128,7 @@ public static class CsvDataJoiner
                             if (existingRecord.ContainsKey(foreignKeyFile))
                             {
                                 // Ensure it's a list to append
-                                var existingRelatedRecords = (List<Dictionary<string, string>>)existingRecord[foreignKeyFile];
+                                var existingRelatedRecords = existingRecord[foreignKeyFile] as List<Dictionary<string, string?>>;
                                 existingRelatedRecords.AddRange(relatedFkRecords);
                             }
                             else

@@ -28,7 +28,7 @@ public static class CsvFileReader
                 string fileNameWithExtension = Path.GetFileName(filePath);
                 var records = csv.GetRecords<dynamic>().ToList();
                 csvData[fileNameWithExtension] = records.Select(record => (IDictionary<string, object>)record)
-                                            .Select(dict => dict.ToDictionary(k => k.Key, k => k.Value?.ToString() ?? string.Empty))
+                                            .Select(dict => dict.ToDictionary(k => k.Key, k => k.Value?.ToString() ?? "null"))
                                             .ToList();
 
                 logger.LogInformation($"Successfully read CSV file: {fileNameWithExtension}");

@@ -2,75 +2,49 @@
   {
     "FarmType": "Organic",
     "TimestampCreated": "2024-01-01",
-    "FarmId": "1",
+    "FarmId": 1,
     "FarmDetails": [
       {
         "Name": "Sunny Farm",
         "Country": "USA",
-        "FarmDetails": []
+        "EmployeeCount": 12
       },
       {
         "Name": "Green Acres",
         "Country": "Canada",
-        "FarmDetails": []
+        "EmployeeCount": 10
       },
       {
         "Name": "Mountain Ridge",
         "Country": "USA",
-        "FarmDetails": []
+        "EmployeeCount": 8
       },
       {
         "Name": "Riverside Farms",
         "Country": "Netherlands",
-        "FarmDetails": []
-      },
-      {
-        "EmployeeCount": "12",
-        "FarmDetails": []
-      },
-      {
-        "EmployeeCount": "10",
-        "FarmDetails": []
-      },
-      {
-        "EmployeeCount": "8",
-        "FarmDetails": []
-      },
-      {
-        "EmployeeCount": "15",
-        "FarmDetails": []
+        "EmployeeCount": 15
       }
     ],
     "Products": [
       {
         "ProductName": "Tomatoes",
         "ProductCategory": "Vegetable",
-        "ProductPrice": "2.5"
+        "ProductPrice": 2.5
       },
       {
         "ProductName": "Cucumbers",
         "ProductCategory": "Vegetable",
-        "ProductPrice": "1.8"
-      },
-      {
-        "ProductName": "Carrots",
-        "ProductCategory": "Vegetable",
-        "ProductPrice": "3.0"
+        "ProductPrice": 1.8
       },
       {
         "ProductName": "Apples",
         "ProductCategory": "Fruit",
-        "ProductPrice": "4.2"
+        "ProductPrice": 4.2
       },
       {
         "ProductName": "Bananas",
         "ProductCategory": "Fruit",
-        "ProductPrice": "1.9"
-      },
-      {
-        "ProductName": "Lettuce",
-        "ProductCategory": "Vegetable",
-        "ProductPrice": "2.3"
+        "ProductPrice": 1.9
       }
     ],
     "Employees": [
@@ -89,10 +63,6 @@
       {
         "EmployeeName": "Michael Brown",
         "EmployeePosition": "Manager"
-      },
-      {
-        "EmployeeName": "Lisa White",
-        "EmployeePosition": "Worker"
       }
     ]
   }

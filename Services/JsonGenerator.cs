@@ -1,18 +1,19 @@
 using CsvToJsonWithMapping.Models;
+using CsvToJsonWithMapping.Services;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
 public static class JsonGenerator
 {
 
-    public static List<Dictionary<string, object>> GenerateJsonFromMappings(Mapping mapping, List<Relation> relations, Dictionary<string, List<Dictionary<string, string>>> csvData, Dictionary<string, List<Dictionary<string, object>>> joinedData, ILogger logger)
+    public static List<Dictionary<string, object?>> GenerateJsonFromMappings(Mapping mapping, List<Relation> relations, Dictionary<string, List<Dictionary<string, string?>>> csvData, Dictionary<string, List<Dictionary<string, object>>> joinedData, ILogger logger)
     {
-        var resultJson = new List<Dictionary<string, object>>();
+        var resultJson = new List<Dictionary<string, object?>>();
 
         logger.LogInformation("Start generating JSON objects based on the mapping.");
 
         var count = 0;
-        var jsonObject = new Dictionary<string, object>();
+        var jsonObject = new Dictionary<string, object?>();
 
         ProcessFieldMappings(mapping.Fields, csvData, count, jsonObject, logger);
         ProcessNestedFieldMappings(mapping.NestedFields, relations, csvData, joinedData, count, jsonObject, logger);
@@ -24,35 +25,37 @@ public static class JsonGenerator
     }
 
 
-    private static void ProcessFieldMappings(List<FieldMapping> fields, Dictionary<string, List<Dictionary<string, string>>> csvData, int count, Dictionary<string, object> jsonObject, ILogger logger)
+    private static void ProcessFieldMappings(List<FieldMapping> fields, Dictionary<string, List<Dictionary<string, string?>>> csvData, int count, Dictionary<string, object?> jsonObject, ILogger logger)
     {
-        foreach (var fieldMapping in fields)
+        foreach (var field in fields)
         {
-            if (fieldMapping.JSONField == null)
+            if (field.JSONField == null)
             {
-                throw new Exception($"JSON field missing in mapping for '{fieldMapping.CSVField}'.");
+                throw new Exception($"JSON field missing in mapping for '{field.CSVField}'.");
             }
 
-            if (fieldMapping.CSVFile == null || fieldMapping.CSVField == null)
+            if (field.CSVFile == null || field.CSVField == null)
             {
-                logger.LogWarning($"CSV file or CSV field is missing from the mapping for '{fieldMapping.JSONField}'.\nSo empty string added.");
-                jsonObject[fieldMapping.JSONField] = string.Empty;
+                logger.LogWarning($"CSV file or CSV field is missing from the mapping for '{field.JSONField}'.\nDefault value '{field.Validations?.DefaultValue}' added");
+
+                jsonObject[field.JSONField] = field.Validations?.DefaultValue;
                 continue;
             }
 
-            if (!csvData.ContainsKey(fieldMapping.CSVFile))
+            if (!csvData.ContainsKey(field.CSVFile))
             {
-                throw new Exception($"CSV file '{fieldMapping.CSVFile}' is missing from the supplied data.");
+                throw new Exception($"CSV file '{field.CSVFile}' is missing from the supplied data.");
             }
 
-            var currentCsvData = csvData[fieldMapping.CSVFile];
+            var currentCsvData = csvData[field.CSVFile];
 
             // normal fields are fields that are the top layer so they go based on the order of the csv data (count)
-            jsonObject[fieldMapping.JSONField] = currentCsvData[count][fieldMapping.CSVField];
+            var data = FieldValidator.ProcessFieldValidation(currentCsvData[count][field.CSVField], field);
+            jsonObject[field.JSONField] = data;
         }
     }
 
-    private static void ProcessNestedFieldMappings(List<NestedMapping> nestedMappings, List<Relation> relations, Dictionary<string, List<Dictionary<string, string>>> csvData, Dictionary<string, List<Dictionary<string, object>>> joinedData, int count, Dictionary<string, object> jsonObject, ILogger logger)
+    private static void ProcessNestedFieldMappings(List<NestedMapping> nestedMappings, List<Relation> relations, Dictionary<string, List<Dictionary<string, string?>>> csvData, Dictionary<string, List<Dictionary<string, object>>> joinedData, int count, Dictionary<string, object?> jsonObject, ILogger logger)
     {
         foreach (var nestedField in nestedMappings)
         {
@@ -74,9 +77,9 @@ public static class JsonGenerator
     }
 
     // Method to process Object type fields
-    private static void ProcessObjectTypeFields(NestedMapping nestedField, Dictionary<string, List<Dictionary<string, string>>> csvData, int count, Dictionary<string, object> jsonObject, ILogger logger)
+    private static void ProcessObjectTypeFields(NestedMapping nestedField, Dictionary<string, List<Dictionary<string, string?>>> csvData, int count, Dictionary<string, object?> jsonObject, ILogger logger)
     {
-        var jsonObjectNested = new Dictionary<string, object>();
+        var jsonObjectNested = new Dictionary<string, object?>();
 
         nestedField.Fields.ForEach(field =>
         {
@@ -87,8 +90,9 @@ public static class JsonGenerator
 
             if (field.CSVFile == null || field.CSVField == null)
             {
-                logger.LogWarning($"CSV file or CSV field is missing from the mapping for '{field.JSONField}'. So empty string added.");
-                jsonObjectNested[field.JSONField] = string.Empty;
+                logger.LogWarning($"CSV file or CSV field is missing from the mapping for '{field.JSONField}'.\nDefault value '{field.Validations?.DefaultValue}' added");
+
+                jsonObject[field.JSONField] = field.Validations?.DefaultValue;
             }
             else
             {
@@ -98,7 +102,8 @@ public static class JsonGenerator
                 }
 
                 var currentCsvData = csvData[field.CSVFile];
-                jsonObjectNested[field.JSONField] = currentCsvData[count][field.CSVField];
+                var data = FieldValidator.ProcessFieldValidation(currentCsvData[count][field.CSVField], field);
+                jsonObjectNested[field.JSONField] = data;
             }
         });
 
@@ -108,7 +113,7 @@ public static class JsonGenerator
     }
 
     // Method to process Array type fields
-    private static void ProcessArrayTypeFields(NestedMapping nestedField, List<Relation> relations, Dictionary<string, List<Dictionary<string, string>>> csvData, Dictionary<string, List<Dictionary<string, object>>> joinedData, Dictionary<string, object> jsonObject, ILogger logger)
+    private static void ProcessArrayTypeFields(NestedMapping nestedField, List<Relation> relations, Dictionary<string, List<Dictionary<string, string?>>> csvData, Dictionary<string, List<Dictionary<string, object>>> joinedData, Dictionary<string, object?> jsonObject, ILogger logger)
     {
         // pkToJsonMapping is a Dictionary where:
         // - The key of the first Dictionary is a Dictionary<string, string>,
@@ -150,7 +155,7 @@ public static class JsonGenerator
     }
 
     // Method to process a field with relations
-    private static void ProcessFieldWithRelations(FieldMapping field, List<Relation> relations, Dictionary<string, List<Dictionary<string, string>>> csvData, Dictionary<string, List<Dictionary<string, object>>> joinedData, Dictionary<Dictionary<string, string>, Dictionary<string, object>> pkToJsonMapping, ILogger logger)
+    private static void ProcessFieldWithRelations(FieldMapping field, List<Relation> relations, Dictionary<string, List<Dictionary<string, string?>>> csvData, Dictionary<string, List<Dictionary<string, object>>> joinedData, Dictionary<Dictionary<string, string>, Dictionary<string, object>> pkToJsonMapping, ILogger logger)
     {
         var fileFkRelations = relations.FindAll(x => x.ForeignKey.CSVFileName == field.CSVFile).ToList();
         var filePkRelations = relations.FindAll(x => x.PrimaryKey.CSVFileName == field.CSVFile).ToList();
@@ -170,7 +175,7 @@ public static class JsonGenerator
     }
 
     // Method to process a field with foreign key relations
-    private static void ProcessFkRelations(FieldMapping field, List<Relation> fileFkRelations, Dictionary<string, List<Dictionary<string, string>>> csvData, Dictionary<string, List<Dictionary<string, object>>> joinedData, Dictionary<Dictionary<string, string>, Dictionary<string, object>> pkToJsonMapping, ILogger logger)
+    private static void ProcessFkRelations(FieldMapping field, List<Relation> fileFkRelations, Dictionary<string, List<Dictionary<string, string?>>> csvData, Dictionary<string, List<Dictionary<string, object>>> joinedData, Dictionary<Dictionary<string, string>, Dictionary<string, object?>> pkToJsonMapping, ILogger logger)
     {
         logger.LogInformation($"FK Relations found for '{field.CSVField}' in file '{field.CSVFile}': {JsonSerializer.Serialize(fileFkRelations, new JsonSerializerOptions { WriteIndented = true })}");
         Relation? correctRelation = null;
@@ -227,23 +232,24 @@ public static class JsonGenerator
 
             // Check if a JSON object already exists for this key
             var existingKey = pkToJsonMapping.Keys.FirstOrDefault(pkDict => pkDict.ContainsValue(primaryKeyValue) && pkDict.ContainsKey(correctRelation.PrimaryKey.CSVFileName));
+            var value = FieldValidator.ProcessFieldValidation(fileData[field.CSVField], field);
             if (existingKey != null)
             {
                 var existingJson = pkToJsonMapping[existingKey];
 
                 if (existingJson.ContainsKey(field.JSONField))
                 {
-                    existingJson[field.JSONField] = fileData[field.CSVField];
+                    existingJson[field.JSONField] = value;
                 }
                 else
                 {
-                    existingJson.Add(field.JSONField, fileData[field.CSVField]);
+                    existingJson.Add(field.JSONField, value);
                 }
             }
             else
             {
-                var jsonObjectNested = new Dictionary<string, object>();
-                jsonObjectNested[field.JSONField] = fileData[field.CSVField];
+                var jsonObjectNested = new Dictionary<string, object?>();
+                jsonObjectNested[field.JSONField] = value;
 
                 pkToJsonMapping[new Dictionary<string, string> { { correctRelation.PrimaryKey.CSVFileName, primaryKeyValue } }] = jsonObjectNested;
             }
@@ -251,7 +257,7 @@ public static class JsonGenerator
     }
 
     // Method to process a field with primary key relations
-    private static void ProcessPkRelations(FieldMapping field, List<Relation> filePkRelations, Dictionary<string, List<Dictionary<string, string>>> csvData, Dictionary<string, List<Dictionary<string, object>>> joinedData, Dictionary<Dictionary<string, string>, Dictionary<string, object>> pkToJsonMapping, ILogger logger)
+    private static void ProcessPkRelations(FieldMapping field, List<Relation> filePkRelations, Dictionary<string, List<Dictionary<string, string?>>> csvData, Dictionary<string, List<Dictionary<string, object>>> joinedData, Dictionary<Dictionary<string, string>, Dictionary<string, object?>> pkToJsonMapping, ILogger logger)
     {
         logger.LogInformation($"PK Relations found for '{field.CSVField}' in file '{field.CSVFile}': {JsonSerializer.Serialize(filePkRelations, new JsonSerializerOptions { WriteIndented = true })}");
         Relation? correctRelation = null;
@@ -304,16 +310,17 @@ public static class JsonGenerator
 
             // Check if a JSON object already exists for this primary key
             var existingKey = pkToJsonMapping.Keys.FirstOrDefault(pkDict => pkDict.ContainsKey(correctRelation.PrimaryKey.CSVFileName) && pkDict.ContainsValue(primaryKeyValue));
+            var value = FieldValidator.ProcessFieldValidation(fileData[field.CSVField].ToString(), field);
+
             if (existingKey != null)
             {
                 var existingJson = pkToJsonMapping[existingKey];
-
-                existingJson.Add(field.JSONField, fileData[field.CSVField]);
+                existingJson.Add(field.JSONField, value);
             }
             else
             {
-                var jsonObjectNested = new Dictionary<string, object>();
-                jsonObjectNested[field.JSONField] = fileData[field.CSVField];
+                var jsonObjectNested = new Dictionary<string, object?>();
+                jsonObjectNested[field.JSONField] = value;
 
                 pkToJsonMapping[new Dictionary<string, string> { { correctRelation.PrimaryKey.CSVFileName, primaryKeyValue } }] = jsonObjectNested;
             }
@@ -321,7 +328,7 @@ public static class JsonGenerator
     }
 
     // Method to process a field without relations
-    private static void ProcessFieldWithoutRelations(FieldMapping field, Dictionary<string, List<Dictionary<string, string>>> csvData, Dictionary<Dictionary<string, string>, Dictionary<string, object>> pkToJsonMapping, ILogger logger)
+    private static void ProcessFieldWithoutRelations(FieldMapping field, Dictionary<string, List<Dictionary<string, string?>>> csvData, Dictionary<Dictionary<string, string>, Dictionary<string, object?>> pkToJsonMapping, ILogger logger)
     {
         logger.LogWarning($"No relation found for '{field.CSVField}' in file '{field.CSVFile}'.");
 
@@ -332,7 +339,7 @@ public static class JsonGenerator
         {
             if (record.ContainsKey(field.CSVField))
             {
-                var value = record[field.CSVField];
+                var value = FieldValidator.ProcessFieldValidation(record[field.CSVField], field);
 
                 var primaryKeyValue = rowNumber.ToString();
 
@@ -346,7 +353,7 @@ public static class JsonGenerator
                 }
                 else
                 {
-                    var jsonObjectNested = new Dictionary<string, object>();
+                    var jsonObjectNested = new Dictionary<string, object?>();
                     jsonObjectNested[field.JSONField] = value;
 
                     pkToJsonMapping[new Dictionary<string, string> { { field.CSVFile, primaryKeyValue } }] = jsonObjectNested;
@@ -361,14 +368,14 @@ public static class JsonGenerator
     }
 
     // Method to add empty nested fields
-    private static void AddEmptyNestedFields(NestedMapping nestedField, Dictionary<string, object> jsonObjectNested, ILogger logger)
+    private static void AddEmptyNestedFields(NestedMapping nestedField, Dictionary<string, object?> jsonObjectNested, ILogger logger)
     {
         if (nestedField.NestedFields.Count > 0)
         {
             logger.LogWarning("Nested fields in nested fields are not supported. Adding empty arrays.");
             foreach (var nested in nestedField.NestedFields)
             {
-                jsonObjectNested[nested.JSONNestedFieldName] = new List<Dictionary<string, object>>();
+                jsonObjectNested[nested.JSONNestedFieldName] = new List<Dictionary<string, object?>>();
             }
         }
     }
