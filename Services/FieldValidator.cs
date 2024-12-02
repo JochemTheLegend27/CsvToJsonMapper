@@ -14,7 +14,8 @@ namespace CsvToJsonWithMapping.Services
         public static object? ProcessFieldValidation(string? value, FieldMapping field)
         {
             // Normalize input value
-            value = string.IsNullOrWhiteSpace(value) ? null : value;
+            value = string.IsNullOrWhiteSpace(value) || value.Trim().ToLowerInvariant() == "null" ? null : value;
+
 
             //TODO: Conversion based on the given conversions in the mapping (field)
 
