@@ -8,7 +8,12 @@
         "Required": true,
         "Type": "String",
         "Min": 0,
-        "Max": null
+        "Max": null,
+        "ValidationsNeedToPass": false
+      },
+      "ConversionRules": {
+        "Organic": "Farm_Organic",
+        "Industrial": "Farm_Industrial"
       }
     },
     {
@@ -26,11 +31,15 @@
       "CSVField": "Id",
       "CSVFile": "farms.csv",
       "JSONField": "FarmId",
-      "Validations":  {
+      "Validations": {
         "Required": true,
-        "Type": "Int",
+        "Type": "bool",
         "Min": 0,
         "Max": 100
+      },
+      "ConversionRules": {
+        "0": "false",
+        "1": "true"
       }
     }
   ],

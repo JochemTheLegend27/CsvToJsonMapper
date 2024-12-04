@@ -4,26 +4,14 @@ using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Text.Json;
 
-/* TODO:
-* Optimize the code less repetition
-* Optimize the code more readable
-* Optimize the code more maintainable (separate concerns (usage of different files/classes))
-* 
+/* TODO: 
 * TESTs needed
 * 
-* 
 * Rules implementation:
-* - once a rule is broken, log the error and continue with the next field then dont create a output but log the error
 * - under each mapping field there is a CSVField and CSVFile and there will be a Rule field
 *      - rules can be:
-*          - the field is required (cannot be empty or null)
-*          - the field type (string, int, double, etc.) (it will try to parse to correct type, if not possible than error)
-*          - the field length (min and max)
 *          - Regex pattern (for example email, phone number, etc.)
-*          - Converter (for example if the field is "yes" than convert to true, if "no" than convert to false, or when field value = 0 then it shpould become "pig")
-*          - dependant on other field (for example if field A is not empty then field B should be empty)
-*          
-*          
+*          - dependant on other field (for example if field A is not empty then field B should be empty)         
 */
 
 class Program

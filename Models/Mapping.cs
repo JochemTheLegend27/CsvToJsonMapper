@@ -23,10 +23,10 @@ namespace CsvToJsonWithMapping.Models
         public string CSVFile { get; set; }
         [Required(ErrorMessage = "JSONField is required")]
         public string JSONField { get; set; }
-        public Validation Validations { get; set; } 
-        // converter ding??
+        public Validation Validations { get; set; }
+        public Dictionary<string, object>? ConversionRules { get; set; }
     }
-    
+
     public class Validation
     {
         public bool Required { get; set; } = false;
@@ -36,19 +36,9 @@ namespace CsvToJsonWithMapping.Models
         public int? Min { get; set; } = null;
         // if fieldtype is a sting its the max characters if its a int its the max value
         public int? Max { get; set; } = null;
- 
-    }
 
-    public enum FieldType
-    {
-        [EnumMember(Value = "String")]
-        String,
-        [EnumMember(Value = "Int")]
-        Int,
-        [EnumMember(Value = "Double")]
-        Double,
-        [EnumMember(Value = "Bool")]
-        Bool
+        public bool ValidationsNeedToPass = false;
+
     }
 
     public enum NestedType
@@ -59,7 +49,7 @@ namespace CsvToJsonWithMapping.Models
         Array
     }
 
-public class NestedMapping
+    public class NestedMapping
     {
         [Required(ErrorMessage = "JSONNestedFieldName is required")]
         public string JSONNestedFieldName { get; set; }

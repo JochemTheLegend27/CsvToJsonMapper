@@ -8,7 +8,12 @@
         "Required": true,
         "Type": "Int", // Any, String, Int, Double, Bool
         "Min": 0,
-        "Max": 100
+        "Max": 100,
+        "ValidationsNeedToPass": false
+      },
+      "ConversionRules": {
+        "csvValue": "JsonValue",
+        "csvValuee": "JosnValueee"
       }
     },
     {
@@ -19,7 +24,12 @@
         "Required": true,
         "Type": "String",
         "Min": null,
-        "Max": null
+        "Max": null,
+        "ValidationsNeedToPass": false
+      },
+      "ConversionRules": {
+        "csvValue": "JsonValue",
+        "csvValuee": "JosnValueee"
       }
     }
   ],
@@ -36,7 +46,12 @@
             "Required": true,
             "Type": "Double",
             "Min": null,
-            "Max": null
+            "Max": null,
+            "ValidationsNeedToPass": false
+          },
+          "ConversionRules": {
+            "csvValue": "JsonValue",
+            "csvValuee": "JosnValueee"
           }
         },
         {
@@ -47,7 +62,12 @@
             "Required": true,
             "Type": "Double",
             "Min": null,
-            "Max": null
+            "Max": null,
+            "ValidationsNeedToPass": false
+          },
+          "ConversionRules": {
+            "csvValue": "JsonValue",
+            "csvValuee": "JosnValueee"
           }
         }
       ],
@@ -64,7 +84,12 @@
                 "Required": true,
                 "Type": "Bool",
                 "Min": null,
-                "Max": null
+                "Max": null,
+                "ValidationsNeedToPass": false
+              },
+              "ConversionRules": {
+                "csvValue": "JsonValue",
+                "csvValuee": "JosnValueee"
               }
             }
           ]

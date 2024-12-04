@@ -1,27 +1,27 @@
 [
   {
-    "FarmType": "Organic",
+    "FarmType": "Farm_Organic",
     "TimestampCreated": "2024-01-01",
-    "FarmId": 1,
+    "FarmId": true,
     "FarmDetails": [
       {
         "Name": "Sunny Farm",
-        "Country": "USA",
+        "Country": false,
         "EmployeeCount": 12
       },
       {
         "Name": "Green Acres",
-        "Country": "Canada",
+        "Country": false,
         "EmployeeCount": 10
       },
       {
         "Name": "Mountain Ridge",
-        "Country": "USA",
+        "Country": false,
         "EmployeeCount": 8
       },
       {
         "Name": "Riverside Farms",
-        "Country": "Netherlands",
+        "Country": false,
         "EmployeeCount": 15
       }
     ],
