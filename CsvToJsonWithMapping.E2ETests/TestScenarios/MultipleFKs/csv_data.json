@@ -1,0 +1,54 @@
+{
+  "customers.csv": [
+    {
+      "Id": "1",
+      "Name": "one"
+    },
+    {
+      "Id": "2",
+      "Name": "two"
+    },
+    {
+      "Id": "3",
+      "Name": "three"
+    },
+    {
+      "Id": "4",
+      "Name": "four"
+    },
+    {
+      "Id": "5",
+      "Name": "five"
+    },
+    {
+      "Id": "6",
+      "Name": "six"
+    }
+  ],
+  "orders.csv": [
+    {
+      "CustomerId": "1",
+      "OrderId": "10",
+      "OrderDate": "2024-01-01"
+    },
+    {
+      "CustomerId": "2",
+      "OrderId": "20",
+      "OrderDate": "2024-01-15"
+    }
+  ],
+  "products.csv": [
+    {
+      "OrderId": "10",
+      "ProductName": "Tomatoes",
+      "Category": "Vegetable",
+      "Price": "2.5"
+    },
+    {
+      "OrderId": "20",
+      "ProductName": "Carrots",
+      "Category": "Vegetable",
+      "Price": "1.8"
+    }
+  ]
+}

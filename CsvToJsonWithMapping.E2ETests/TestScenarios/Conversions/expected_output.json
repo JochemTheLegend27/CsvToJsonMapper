@@ -1,0 +1,9 @@
+[
+  {
+    "Customers": [
+      { "CustomerTypeConverted": "PremiumCustomer" },
+      { "CustomerTypeConverted": "StandardCustomer" }
+    ]
+  }
+] 
+  

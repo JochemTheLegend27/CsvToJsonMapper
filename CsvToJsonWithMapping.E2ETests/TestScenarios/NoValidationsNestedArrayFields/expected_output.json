@@ -1,0 +1,14 @@
+[
+  {
+    "CustomerOrders": [
+      {
+        "CustomerId": "1",
+        "OrderId": "1"
+      },
+      {
+        "CustomerId": "2",
+        "OrderId": "2"
+      }
+    ]
+  }
+] 

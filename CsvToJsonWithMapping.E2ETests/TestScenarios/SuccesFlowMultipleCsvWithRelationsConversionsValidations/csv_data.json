@@ -1,0 +1,151 @@
+{
+  "customers.csv": [
+    {
+      "Id": "1",
+      "Name": "Alice Cooper",
+      "Email": "alice@farm.com",
+      "Country": "USA"
+    },
+    {
+      "Id": "2",
+      "Name": "Bob Johnson",
+      "Email": "bob@vegetables.com",
+      "Country": "Canada"
+    },
+    {
+      "Id": "3",
+      "Name": "Charlie Brown",
+      "Email": "charlie@fresh.com",
+      "Country": "Netherlands"
+    }
+  ],
+  "employees.csv": [
+    {
+      "Id": "1",
+      "Name": "John Doe",
+      "Position": "Manager",
+      "FarmId": "1"
+    },
+    {
+      "Id": "2",
+      "Name": "Jane Smith",
+      "Position": "Worker",
+      "FarmId": "2"
+    },
+    {
+      "Id": "3",
+      "Name": "Emily Davis",
+      "Position": "Worker",
+      "FarmId": "3"
+    },
+    {
+      "Id": "4",
+      "Name": "Michael Brown",
+      "Position": "Manager",
+      "FarmId": "4"
+    },
+    {
+      "Id": "5",
+      "Name": "Lisa White",
+      "Position": "Worker",
+      "FarmId": "1"
+    }
+  ],
+  "farmDetails.csv": [
+    {
+      "FarmId": "1",
+      "FarmName": "Sunny Farm",
+      "EmployeeCount": "12"
+    },
+    {
+      "FarmId": "2",
+      "FarmName": "Green Acres",
+      "EmployeeCount": "10"
+    },
+    {
+      "FarmId": "3",
+      "FarmName": "Mountain Ridge",
+      "EmployeeCount": "8"
+    },
+    {
+      "FarmId": "4",
+      "FarmName": "Riverside Farms",
+      "EmployeeCount": "15"
+    }
+  ],
+  "farms.csv": [
+    {
+      "Id": "1",
+      "Name": "Sunny Farm",
+      "Type": "Organic",
+      "CountryOfOrigin": "USA",
+      "CreatedAt": "2024-01-01"
+    },
+    {
+      "Id": "2",
+      "Name": "Green Acres",
+      "Type": "Conventional",
+      "CountryOfOrigin": "Canada",
+      "CreatedAt": "2024-02-15"
+    },
+    {
+      "Id": "3",
+      "Name": "Mountain Ridge",
+      "Type": "Organic",
+      "CountryOfOrigin": "USA",
+      "CreatedAt": "2024-03-10"
+    },
+    {
+      "Id": "4",
+      "Name": "Riverside Farms",
+      "Type": "Hydroponic",
+      "CountryOfOrigin": "Netherlands",
+      "CreatedAt": "2024-04-05"
+    }
+  ],
+  "products.csv": [
+    {
+      "Id": "1",
+      "Name": "Tomatoes",
+      "Category": "Vegetable",
+      "FarmId": "1",
+      "Price": "2.5"
+    },
+    {
+      "Id": "2",
+      "Name": "Cucumbers",
+      "Category": "Vegetable",
+      "FarmId": "2",
+      "Price": "1.8"
+    },
+    {
+      "Id": "3",
+      "Name": "Carrots",
+      "Category": "Vegetable",
+      "FarmId": "1",
+      "Price": "3.0"
+    },
+    {
+      "Id": "4",
+      "Name": "Apples",
+      "Category": "Fruit",
+      "FarmId": "3",
+      "Price": "4.2"
+    },
+    {
+      "Id": "5",
+      "Name": "Bananas",
+      "Category": "Fruit",
+      "FarmId": "4",
+      "Price": "1.9"
+    },
+    {
+      "Id": "6",
+      "Name": "Lettuce",
+      "Category": "Vegetable",
+      "FarmId": "4",
+      "Price": "2.3"
+    }
+  ]
+}
+

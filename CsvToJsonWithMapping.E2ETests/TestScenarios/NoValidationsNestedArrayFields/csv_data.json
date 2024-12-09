@@ -1,0 +1,10 @@
+{
+  "customers.csv": [
+    { "Id": "1" },
+    { "Id": "2" }
+  ],
+  "orders.csv": [
+    { "CustomerId": "1" },
+    { "CustomerId": "2" }
+  ]
+}

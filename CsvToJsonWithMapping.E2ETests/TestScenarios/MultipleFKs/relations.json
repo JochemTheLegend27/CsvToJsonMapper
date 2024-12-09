@@ -1,0 +1,22 @@
+[
+  {
+    "PrimaryKey": {
+      "CSVField": "Id",
+      "CSVFileName": "customers.csv"
+    },
+    "ForeignKey": {
+      "CSVField": "CustomerId",
+      "CSVFileName": "orders.csv"
+    }
+  },
+  {
+    "PrimaryKey": {
+      "CSVField": "OrderId",
+      "CSVFileName": "orders.csv"
+    },
+    "ForeignKey": {
+      "CSVField": "OrderId",
+      "CSVFileName": "products.csv"
+    }
+  }
+]

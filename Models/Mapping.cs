@@ -23,19 +23,19 @@ namespace CsvToJsonWithMapping.Models
         public string CSVFile { get; set; }
         [Required(ErrorMessage = "JSONField is required")]
         public string JSONField { get; set; }
-        public Validation Validations { get; set; }
+        public Validations Validations { get; set; } = new();
         public Dictionary<string, object>? ConversionRules { get; set; }
     }
 
-    public class Validation
+    public class Validations
     {
         public bool Required { get; set; } = false;
         public object? DefaultValue { get; set; } = null;
         public string Type { get; set; } = "String";
         // if fieldtype is a sting its the min characters if its a int its the min value
-        public int? Min { get; set; } = null;
+        public double? Min { get; set; } = null;
         // if fieldtype is a sting its the max characters if its a int its the max value
-        public int? Max { get; set; } = null;
+        public double? Max { get; set; } = null;
 
         public bool ValidationsNeedToPass = false;
 

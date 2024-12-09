@@ -1,0 +1,78 @@
+[
+  {
+    "Customers": [
+      {
+        "CustomerId": "1",
+        "CustomerName": "one"
+      },
+      {
+        "CustomerId": "2",
+        "CustomerName": "two"
+      },
+      {
+        "CustomerId": "3",
+        "CustomerName": "three"
+      },
+      {
+        "CustomerId": "4",
+        "CustomerName": "four"
+      },
+      {
+        "CustomerId": "5",
+        "CustomerName": "five"
+      },
+      {
+        "CustomerId": "6",
+        "CustomerName": "six"
+      }
+    ],
+    "Orders": [
+      {
+        "OrderCustomerId": "1",
+        "OrderId": "10",
+        "OrderDate": "2024-01-01"
+      },
+      {
+        "OrderCustomerId": "2",
+        "OrderId": "20",
+        "OrderDate": "2024-01-15"
+      }
+    ],
+    "Products": [
+      {
+        "ProductName": "Tomatoes",
+        "ProductCategory": "Vegetable",
+        "ProductPrice": "2.5",
+        "ProductOrderId": "10"
+      },
+      {
+        "ProductName": "Carrots",
+        "ProductCategory": "Vegetable",
+        "ProductPrice": "1.8",
+        "ProductOrderId": "20"
+      }
+    ],
+    "CustomerOrders": [
+      {
+        "CustomerId": "1",
+        "OrderId": "10",
+        "OrderDate": "2024-01-01"
+      },
+      {
+        "CustomerId": "2",
+        "OrderId": "20",
+        "OrderDate": "2024-01-15"
+      },
+      {
+        "ProductName": "Tomatoes",
+        "ProductCategory": "Vegetable",
+        "ProductPrice": "2.5"
+      },
+      {
+        "ProductName": "Carrots",
+        "ProductCategory": "Vegetable",
+        "ProductPrice": "1.8"
+      }
+    ]
+  }
+] 

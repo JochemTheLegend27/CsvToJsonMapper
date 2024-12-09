@@ -1,0 +1,19 @@
+{
+  "NestedFields": [
+    {
+      "JSONNestedType": "Array",
+      "JSONNestedFieldName": "Customers",
+      "Fields": [
+        {
+          "CSVField": "IsSubscribed",
+          "CSVFile": "customers.csv",
+          "JSONField": "CustomerSubscriptionStatus",
+          "Validations": {
+            "Required": false,
+            "Type": "Bool"
+          }
+        }
+      ]
+    }
+  ]
+}

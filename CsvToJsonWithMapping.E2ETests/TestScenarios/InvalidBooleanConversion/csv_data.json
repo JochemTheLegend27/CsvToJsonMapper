@@ -1,0 +1,16 @@
+{
+  "customers.csv": [
+    {
+      "Id": "1",
+      "IsSubscribed": "yes"
+    },
+    {
+      "Id": "2",
+      "IsSubscribed": "nope"
+    }
+  ],
+  "orders.csv": [
+    { "CustomerId": "1" },
+    { "CustomerId": "2" }
+  ]
+}

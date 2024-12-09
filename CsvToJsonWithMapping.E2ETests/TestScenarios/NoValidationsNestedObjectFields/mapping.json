@@ -1,0 +1,20 @@
+{
+  "NestedFields": [
+    {
+      "JSONNestedType": "Object",
+      "JSONNestedFieldName": "CustomerOrders",
+      "Fields": [
+        {
+          "CSVField": "Id",
+          "CSVFile": "customers.csv",
+          "JSONField": "CustomerId"
+        },
+        {
+          "CSVField": "CustomerId",
+          "CSVFile": "orders.csv",
+          "JSONField": "OrderId"
+        }
+      ]
+    }
+  ]
+}

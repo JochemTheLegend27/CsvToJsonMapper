@@ -89,8 +89,18 @@ class Program
 
             JsonWriter.WriteJsonToFile(outputJsonPath, finalResult, logger);
 
-            var log = FieldValidator.GetLog();
-            foreach (var logEntry in log)
+            var validationLogs = FieldValidator.GetLog();
+            foreach (var logEntry in validationLogs)
+            {
+                Console.WriteLine($"{logEntry.Key}:");
+                foreach (var message in logEntry.Value)
+                {
+                    Console.WriteLine($" - {message}");
+                }
+            }
+
+            var mappingLogs = FieldValidator.GetLog();
+            foreach (var logEntry in mappingLogs)
             {
                 Console.WriteLine($"{logEntry.Key}:");
                 foreach (var message in logEntry.Value)
@@ -106,7 +116,7 @@ class Program
         }
     }
 
-    private static void CheckFileExists(string filePath, string fileType)
+    internal static void CheckFileExists(string filePath, string fileType)
     {
         if (!File.Exists(filePath))
         {
@@ -114,7 +124,7 @@ class Program
         }
     }
 
-    private static void CheckDirectoryExists(string directoryPath, string directoryType)
+    internal static void CheckDirectoryExists(string directoryPath, string directoryType)
     {
         if (!Directory.Exists(directoryPath))
         {

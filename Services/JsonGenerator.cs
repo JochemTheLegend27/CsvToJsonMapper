@@ -5,7 +5,7 @@ using System.Text.Json;
 
 public static class JsonGenerator
 {
-
+    private static readonly Dictionary<string, List<string>> _log = new();
     public static List<Dictionary<string, object?>> GenerateJsonFromMappings(Mapping mapping, List<Relation> relations, Dictionary<string, List<Dictionary<string, string?>>> csvData, Dictionary<string, List<Dictionary<string, object>>> joinedData, ILogger logger)
     {
         var resultJson = new List<Dictionary<string, object?>>();
@@ -214,25 +214,31 @@ public static class JsonGenerator
         // Process the joined data
         foreach (var record in correctJoined)
         {
-            var primaryKeyValue = record[correctRelation.PrimaryKey.CSVField].ToString();
+            var primaryKeyValue = record[correctRelation.PrimaryKey.CSVField]?.ToString();
             if (primaryKeyValue == null)
             {
-                throw new Exception($"No primary key value found for '{correctRelation.PrimaryKey.CSVField}' in file '{correctRelation.PrimaryKey.CSVFileName}'.");
+                LogWarning($"No primary key value found for '{correctRelation.PrimaryKey.CSVField}' in file '{correctRelation.PrimaryKey.CSVFileName}'.");
+                continue; // Skip this record to avoid further processing issues
             }
 
-            var fileData = ((List<Dictionary<string, string>>)record[field.CSVFile]).FirstOrDefault();
+            var fileData = (record[field.CSVFile] as List<Dictionary<string, string>>)?.FirstOrDefault();
+
             if (fileData == null)
             {
-                throw new Exception($"No data found for '{field.CSVFile}' in joined record.");
+                LogWarning($"No data found for '{field.CSVFile}' in joined record.");
+                continue;
             }
+
             if (!fileData.ContainsKey(field.CSVField))
             {
-                throw new Exception($"No data found for '{field.CSVField}' in joined record.");
+                LogWarning($"No data found for '{field.CSVField}' in joined record.");
+                continue;
             }
 
             // Check if a JSON object already exists for this key
             var existingKey = pkToJsonMapping.Keys.FirstOrDefault(pkDict => pkDict.ContainsValue(primaryKeyValue) && pkDict.ContainsKey(correctRelation.PrimaryKey.CSVFileName));
             var value = FieldValidator.ProcessFieldValidation(fileData[field.CSVField], field);
+
             if (existingKey != null)
             {
                 var existingJson = pkToJsonMapping[existingKey];
@@ -406,6 +412,31 @@ public static class JsonGenerator
                 map.Value.Add(fieldWithoutCsv.JSONField, string.Empty);
             }
         }
+    }
+
+    private static void LogError(string message)
+    {
+        AddToLog("Error", message);
+    }
+
+    private static void LogWarning(string message)
+    {
+        AddToLog("Warning", message);
+    }
+
+    private static void AddToLog(string type, string message)
+    {
+        if (!_log.ContainsKey(type))
+        {
+            _log[type] = new List<string>();
+        }
+
+        _log[type].Add(message);
+    }
+
+    public static Dictionary<string, List<string>> GetLog()
+    {
+        return _log;
     }
 
 }

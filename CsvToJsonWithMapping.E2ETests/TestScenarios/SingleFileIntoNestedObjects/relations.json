@@ -1,0 +1,12 @@
+[
+  {
+    "PrimaryKey": {
+      "CSVField": "Id",
+      "CSVFileName": "customers.csv"
+    },
+    "ForeignKey": {
+      "CSVField": null,
+      "CSVFileName": null
+    }
+  }
+]

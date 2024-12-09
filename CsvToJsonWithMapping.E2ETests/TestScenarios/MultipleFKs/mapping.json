@@ -1,0 +1,103 @@
+{
+  "NestedFields": [
+    {
+      "JSONNestedType": "Array",
+      "JSONNestedFieldName": "Customers",
+      "Fields": [
+        {
+          "CSVField": "Id",
+          "CSVFile": "customers.csv",
+          "JSONField": "CustomerId"
+        },
+        {
+          "CSVField": "Name",
+          "CSVFile": "customers.csv",
+          "JSONField": "CustomerName"
+        }
+      ]
+    },
+    {
+      "JSONNestedType": "Array",
+      "JSONNestedFieldName": "Orders",
+      "Fields": [
+        {
+          "CSVField": "CustomerId",
+          "CSVFile": "orders.csv",
+          "JSONField": "OrderCustomerId"
+        },
+        {
+          "CSVField": "OrderId",
+          "CSVFile": "orders.csv",
+          "JSONField": "OrderId"
+        },
+        {
+          "CSVField": "OrderDate",
+          "CSVFile": "orders.csv",
+          "JSONField": "OrderDate"
+        }
+      ]
+    },
+    {
+      "JSONNestedType": "Array",
+      "JSONNestedFieldName": "Products",
+      "Fields": [
+        {
+          "CSVField": "ProductName",
+          "CSVFile": "products.csv",
+          "JSONField": "ProductName"
+        },
+        {
+          "CSVField": "Category",
+          "CSVFile": "products.csv",
+          "JSONField": "ProductCategory"
+        },
+        {
+          "CSVField": "Price",
+          "CSVFile": "products.csv",
+          "JSONField": "ProductPrice"
+        },
+        {
+          "CSVField": "OrderId",
+          "CSVFile": "products.csv",
+          "JSONField": "ProductOrderId"
+        }
+      ]
+    },
+    {
+      "JSONNestedType": "Array",
+      "JSONNestedFieldName": "CustomerOrders",
+      "Fields": [
+        {
+          "CSVField": "CustomerId",
+          "CSVFile": "orders.csv",
+          "JSONField": "CustomerId"
+        },
+        {
+          "CSVField": "OrderId",
+          "CSVFile": "orders.csv",
+          "JSONField": "OrderId"
+        },
+        {
+          "CSVField": "OrderDate",
+          "CSVFile": "orders.csv",
+          "JSONField": "OrderDate"
+        },
+        {
+          "CSVField": "ProductName",
+          "CSVFile": "products.csv",
+          "JSONField": "ProductName"
+        },
+        {
+          "CSVField": "Category",
+          "CSVFile": "products.csv",
+          "JSONField": "ProductCategory"
+        },
+        {
+          "CSVField": "Price",
+          "CSVFile": "products.csv",
+          "JSONField": "ProductPrice"
+        }
+      ]
+    }
+  ]
+}

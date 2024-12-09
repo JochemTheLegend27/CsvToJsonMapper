@@ -1,0 +1,19 @@
+{
+  "NestedFields": [
+    {
+      "JSONNestedType": "Array",
+      "JSONNestedFieldName": "Customers",
+      "Fields": [
+        {
+          "CSVField": "CustomerType",
+          "CSVFile": "customers.csv",
+          "JSONField": "CustomerTypeConverted",
+          "ConversionRules": {
+            "Premium": "PremiumCustomer",
+            "Standard": "StandardCustomer"
+          }
+        }
+      ]
+    }
+  ]
+}
