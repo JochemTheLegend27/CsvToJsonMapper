@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CsvToJsonWithMapping.csproj" />
+    <ProjectReference Include="..\CsvToJsonWithMapping\CsvToJsonWithMapping.csproj" />
   </ItemGroup>
 
 

@@ -5,9 +5,9 @@ VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvToJsonWithMapping", "CsvToJsonWithMapping.csproj", "{C655C1C0-DAA2-4ED3-9654-02972A574D69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvToJsonWithMapping.Tests", "CsvToJsonWithMapping.Tests\CsvToJsonWithMapping.Tests.csproj", "{D79FD33A-E4EF-4883-934E-BFAEF95FBAB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvToJsonWithMapping.Tests", "..\CsvToJsonWithMapping.Tests\CsvToJsonWithMapping.Tests.csproj", "{D79FD33A-E4EF-4883-934E-BFAEF95FBAB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvToJsonWithMapping.E2ETests", "CsvToJsonWithMapping.E2ETests\CsvToJsonWithMapping.E2ETests.csproj", "{8EE1A41A-8716-4DF4-AEF0-AF58F879D64E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvToJsonWithMapping.E2ETests", "..\CsvToJsonWithMapping.E2ETests\CsvToJsonWithMapping.E2ETests.csproj", "{8EE1A41A-8716-4DF4-AEF0-AF58F879D64E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
