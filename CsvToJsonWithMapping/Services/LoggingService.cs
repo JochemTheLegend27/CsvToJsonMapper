@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace CsvToJsonWithMapping.Services
 {
-    public class LoggingService
+    public static class LoggingService
     {
-        private readonly Dictionary<string, List<string>> _log = new();
+        private static readonly Dictionary<string, List<string>> _log = new();
 
-        public void Log(string type, string message)
+        public static void Log(string type, string message)
         {
             if (!_log.ContainsKey(type))
             {
@@ -20,14 +20,25 @@ namespace CsvToJsonWithMapping.Services
             _log[type].Add(message);
         }
 
-        public Dictionary<string, List<string>> GetLogs()
+        public static Dictionary<string, List<string>> GetLogs()
         {
             return _log;
         }
 
-        public void ClearLogs()
+        public static void ClearLogs()
         {
             _log.Clear();
         }
+
+        public static void LogError(string category, string message)
+        {
+            Log($"{category} - Error", message);
+        }
+
+        public static void LogWarning(string category, string message)
+        {
+            Log($"{category} - Warning", message);
+        }
+
     }
 }

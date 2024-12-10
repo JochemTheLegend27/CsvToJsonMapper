@@ -5,7 +5,6 @@ using System.Text.Json;
 
 public static class JsonGenerator
 {
-    private static readonly Dictionary<string, List<string>> _log = new();
     public static List<Dictionary<string, object?>> GenerateJsonFromMappings(Mapping mapping, List<Relation> relations, Dictionary<string, List<Dictionary<string, string?>>> csvData, Dictionary<string, List<Dictionary<string, object>>> joinedData, ILogger logger)
     {
         var resultJson = new List<Dictionary<string, object?>>();
@@ -217,7 +216,7 @@ public static class JsonGenerator
             var primaryKeyValue = record[correctRelation.PrimaryKey.CSVField]?.ToString();
             if (primaryKeyValue == null)
             {
-                LogWarning($"No primary key value found for '{correctRelation.PrimaryKey.CSVField}' in file '{correctRelation.PrimaryKey.CSVFileName}'.");
+                LoggingService.LogWarning("CSVData",$"No primary key value found for '{correctRelation.PrimaryKey.CSVField}' in file '{correctRelation.PrimaryKey.CSVFileName}'.");
                 continue; // Skip this record to avoid further processing issues
             }
 
@@ -225,13 +224,13 @@ public static class JsonGenerator
 
             if (fileData == null)
             {
-                LogWarning($"No data found for '{field.CSVFile}' in joined record.");
+                LoggingService.LogWarning("CSVData",$"No data found for '{field.CSVFile}' in joined record.");
                 continue;
             }
 
             if (!fileData.ContainsKey(field.CSVField))
             {
-                LogWarning($"No data found for '{field.CSVField}' in joined record.");
+                LoggingService.LogWarning("CSVData", $"No data found for '{field.CSVField}' in joined record.");
                 continue;
             }
 
@@ -412,31 +411,6 @@ public static class JsonGenerator
                 map.Value.Add(fieldWithoutCsv.JSONField, string.Empty);
             }
         }
-    }
-
-    private static void LogError(string message)
-    {
-        AddToLog("Error", message);
-    }
-
-    private static void LogWarning(string message)
-    {
-        AddToLog("Warning", message);
-    }
-
-    private static void AddToLog(string type, string message)
-    {
-        if (!_log.ContainsKey(type))
-        {
-            _log[type] = new List<string>();
-        }
-
-        _log[type].Add(message);
-    }
-
-    public static Dictionary<string, List<string>> GetLog()
-    {
-        return _log;
     }
 
 }

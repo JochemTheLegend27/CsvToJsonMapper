@@ -25,7 +25,6 @@ class Program
         });
         var logger = loggerFactory.CreateLogger<Program>();
 
-
         // Get the base directory of the current application
         var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -84,18 +83,8 @@ class Program
 
             JsonWriter.WriteJsonToFile(outputJsonPath, finalResult, logger);
 
-            var validationLogs = FieldValidator.GetLog();
-            foreach (var logEntry in validationLogs)
-            {
-                Console.WriteLine($"{logEntry.Key}:");
-                foreach (var message in logEntry.Value)
-                {
-                    Console.WriteLine($" - {message}");
-                }
-            }
-
-            var mappingLogs = FieldValidator.GetLog();
-            foreach (var logEntry in mappingLogs)
+            var logs = LoggingService.GetLogs();
+            foreach (var logEntry in logs)
             {
                 Console.WriteLine($"{logEntry.Key}:");
                 foreach (var message in logEntry.Value)

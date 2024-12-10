@@ -87,39 +87,16 @@ namespace CsvToJsonWithMapping.Services
         {
             if (validationsNeedToPass)
             {
-                LogError(message);
+                LoggingService.LogError("Validation",message);
                 throw new Exception(message);
             }
             else
             {
-                LogWarning($"Validation warning: {message}");
+                LoggingService.LogWarning("Validation", message);
             }
         }
 
-        private static void LogError(string message)
-        {
-            AddToLog("Error", message);
-        }
-
-        private static void LogWarning(string message)
-        {
-            AddToLog("Warning", message);
-        }
-
-        private static void AddToLog(string type, string message)
-        {
-            if (!_log.ContainsKey(type))
-            {
-                _log[type] = new List<string>();
-            }
-
-            _log[type].Add(message);
-        }
-
-        public static Dictionary<string, List<string>> GetLog()
-        {
-            return _log;
-        }
+      
 
 
         private delegate bool TryParseHandler<T>(string? input, out T result);
