@@ -6,11 +6,6 @@ using System.Globalization;
 using System.Text.Json;
 
 /* TODO: 
- * 
- * Maybe solution???
-*  We group all the "error" (warning) messages in a dictionary and return it to the caller
-*  TESTs needed
-* 
 * Rules implementation:
 * - under each mapping field there is a CSVField and CSVFile and there will be a Rule field
 *      - rules can be:

@@ -1,0 +1,14 @@
+[
+  {
+    "Customers": [
+      {
+        "CustomerType": "Premium",
+        "NestedArrayShouldBeEmpty": []
+      },
+      {
+        "CustomerType": "Standard",
+        "NestedArrayShouldBeEmpty": []
+      }
+    ]
+  }
+] 

@@ -27,6 +27,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestScenarios\DeepNestedWillBecomeArray\csv_data.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\DeepNestedWillBecomeArray\expected_output.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\DeepNestedWillBecomeArray\mapping.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\DeepNestedWillBecomeArray\relations.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestScenarios\SingleFileIntoNestedObjects\csv_data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
