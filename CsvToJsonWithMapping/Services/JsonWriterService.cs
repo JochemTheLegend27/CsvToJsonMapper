@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
-public static class JsonWriter
+public static class JsonWriterService
 {
     public static void WriteJsonToFile(string filePath, List<Dictionary<string, object>> jsonData, ILogger logger)
     {

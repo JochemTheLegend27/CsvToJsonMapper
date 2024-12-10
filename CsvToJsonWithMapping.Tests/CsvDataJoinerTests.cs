@@ -49,7 +49,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = CsvDataJoiner.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
+            var result = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
 
             // Assert
             Assert.Empty(result);
@@ -79,7 +79,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act & Assert
-            Assert.Throws<Exception>(() => CsvDataJoiner.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object));
+            Assert.Throws<Exception>(() => CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object));
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = CsvDataJoiner.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
+            var result = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
 
             // Assert
             Assert.NotNull(result);
@@ -152,7 +152,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = CsvDataJoiner.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
+            var result = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
 
             // Assert
             Assert.NotNull(result);
@@ -225,7 +225,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = CsvDataJoiner.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
+            var result = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
 
             // Assert
             Assert.NotNull(result);
@@ -279,7 +279,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = CsvDataJoiner.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
+            var result = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
 
             // Assert
             Assert.NotNull(result);
@@ -332,7 +332,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = CsvDataJoiner.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
+            var result = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
 
             // Assert
             Assert.NotNull(result);
@@ -420,7 +420,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = CsvDataJoiner.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
+            var result = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
 
             // Assert
             Assert.NotNull(result);
