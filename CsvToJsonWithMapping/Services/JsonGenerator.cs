@@ -5,8 +5,20 @@ using System.Text.Json;
 
 public static class JsonGenerator
 {
+
+    private static int _totalFields = 0;
+    private static int _processedFields = 0;
+
     public static List<Dictionary<string, object?>> GenerateJsonFromMappings(Mapping mapping, List<Relation> relations, Dictionary<string, List<Dictionary<string, string?>>> csvData, Dictionary<string, List<Dictionary<string, object>>> joinedData, ILogger logger)
     {
+
+        _totalFields = mapping.Fields.Count();
+        mapping.NestedFields.ForEach(x =>
+        {
+            _totalFields += x.Fields.Count();
+            _totalFields += x.NestedFields.Count();
+        });
+
         var resultJson = new List<Dictionary<string, object?>>();
 
         logger.LogInformation("Start generating JSON objects based on the mapping.");
@@ -28,6 +40,7 @@ public static class JsonGenerator
     {
         foreach (var field in fields)
         {
+            ProgressField();
             if (field.JSONField == null)
             {
                 throw new Exception($"JSON field missing in mapping for '{field.CSVField}'.");
@@ -82,6 +95,8 @@ public static class JsonGenerator
 
         nestedField.Fields.ForEach(field =>
         {
+            ProgressField();
+
             if (field.JSONField == null)
             {
                 throw new Exception($"JSON field missing in mapping for '{field.CSVField}'.");
@@ -125,7 +140,13 @@ public static class JsonGenerator
 
         foreach (var field in nestedField.Fields)
         {
-            ValidateField(field, logger);
+            ProgressField();
+
+            if (field.JSONField == null)
+            {
+                logger.LogError($"JSON field missing in mapping for '{field.CSVField}'.");
+                throw new Exception($"JSON field missing in mapping for '{field.CSVField}'.");
+            }
 
             if (field.CSVFile == null || field.CSVField == null)
             {
@@ -141,16 +162,6 @@ public static class JsonGenerator
         AddEmptyNestedFields(nestedField, pkToJsonMapping, logger);
         AddFieldsWithoutCsv(jsonFieldsWithoutCsv, pkToJsonMapping);
         jsonObject[nestedField.JSONNestedFieldName] = pkToJsonMapping.Values.ToList();
-    }
-
-    // Method to validate a field
-    private static void ValidateField(FieldMapping field, ILogger logger)
-    {
-        if (field.JSONField == null)
-        {
-            logger.LogError($"JSON field missing in mapping for '{field.CSVField}'.");
-            throw new Exception($"JSON field missing in mapping for '{field.CSVField}'.");
-        }
     }
 
     // Method to process a field with relations
@@ -380,6 +391,7 @@ public static class JsonGenerator
             logger.LogWarning("Nested fields in nested fields are not supported. Adding empty arrays.");
             foreach (var nested in nestedField.NestedFields)
             {
+                ProgressField();
                 jsonObjectNested[nested.JSONNestedFieldName] = new List<Dictionary<string, object?>>();
             }
         }
@@ -393,6 +405,7 @@ public static class JsonGenerator
             logger.LogWarning("Nested fields in nested fields are not supported. Adding empty arrays.");
             foreach (var nested in nestedField.NestedFields)
             {
+                ProgressField();
                 foreach (var map in pkToJsonMapping)
                 {
                     map.Value.Add(nested.JSONNestedFieldName, new List<Dictionary<string, object>>());
@@ -411,6 +424,12 @@ public static class JsonGenerator
                 map.Value.Add(fieldWithoutCsv.JSONField, string.Empty);
             }
         }
+    }
+
+    private static void ProgressField()
+    {
+        _processedFields++;
+        LoggingService.LogProgress(_processedFields, _totalFields);
     }
 
 }

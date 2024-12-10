@@ -10,6 +10,8 @@ namespace CsvToJsonWithMapping.Services
     {
         private static readonly Dictionary<string, List<string>> _log = new();
 
+        private static double _percentageComplete = 0;
+
         public static void Log(string type, string message)
         {
             if (!_log.ContainsKey(type))
@@ -50,6 +52,21 @@ namespace CsvToJsonWithMapping.Services
                     Console.WriteLine($" - {message}");
                 }
             }
+        }
+
+        public static void LogProgress(int current, int total)
+        {
+            _percentageComplete = (double)current / total * 100;
+        }
+
+        public static void DisplayProgress()
+        {
+            Console.WriteLine($"Progress: {_percentageComplete}%");
+        }
+
+        public static double GetProgress()
+        {
+            return _percentageComplete;
         }
 
 

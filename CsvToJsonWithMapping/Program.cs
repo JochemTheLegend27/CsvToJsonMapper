@@ -83,6 +83,7 @@ class Program
 
             JsonWriter.WriteJsonToFile(outputJsonPath, finalResult, logger);
 
+            LoggingService.DisplayProgress();
             LoggingService.DisplayLogs();
         }
         catch (Exception ex)
