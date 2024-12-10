@@ -1,12 +1,7 @@
 ﻿using CsvToJsonWithMapping.E2ETests.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace CsvToJsonWithMapping.E2ETests
 {
@@ -49,6 +44,5 @@ namespace CsvToJsonWithMapping.E2ETests
             return actualJson == expectedJson;
         }
     }
-
 
 }
