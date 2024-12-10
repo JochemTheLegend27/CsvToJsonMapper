@@ -40,5 +40,18 @@ namespace CsvToJsonWithMapping.Services
             Log($"{category} - Warning", message);
         }
 
+        public static void DisplayLogs()
+        {
+            foreach (var logEntry in _log)
+            {
+                Console.WriteLine($"{logEntry.Key}:");
+                foreach (var message in logEntry.Value)
+                {
+                    Console.WriteLine($" - {message}");
+                }
+            }
+        }
+
+
     }
 }

@@ -88,16 +88,12 @@ namespace CsvToJsonWithMapping.Services
             if (validationsNeedToPass)
             {
                 LoggingService.LogError("Validation",message);
-                throw new Exception(message);
             }
             else
             {
                 LoggingService.LogWarning("Validation", message);
             }
         }
-
-      
-
 
         private delegate bool TryParseHandler<T>(string? input, out T result);
     }

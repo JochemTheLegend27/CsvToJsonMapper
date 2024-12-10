@@ -83,16 +83,7 @@ class Program
 
             JsonWriter.WriteJsonToFile(outputJsonPath, finalResult, logger);
 
-            var logs = LoggingService.GetLogs();
-            foreach (var logEntry in logs)
-            {
-                Console.WriteLine($"{logEntry.Key}:");
-                foreach (var message in logEntry.Value)
-                {
-                    Console.WriteLine($" - {message}");
-                }
-            }
-
+            LoggingService.DisplayLogs();
         }
         catch (Exception ex)
         {
