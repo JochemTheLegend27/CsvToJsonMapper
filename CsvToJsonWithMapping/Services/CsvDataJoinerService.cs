@@ -1,7 +1,7 @@
 using CsvToJsonWithMapping.Models;
 using Microsoft.Extensions.Logging;
 
-public static class CsvDataJoiner
+public static class CsvDataJoinerService
 {
     /// <summary>
     /// Joins CSV data based on relations.

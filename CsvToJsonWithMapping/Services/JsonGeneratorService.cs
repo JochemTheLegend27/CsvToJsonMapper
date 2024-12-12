@@ -4,7 +4,7 @@ using CsvToJsonWithMapping.Services;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
-public static class JsonGenerator
+public static class JsonGeneratorService
 {
 
     private static int _totalFields = 0;
@@ -63,7 +63,7 @@ public static class JsonGenerator
             var currentCsvData = csvData[field.CSVFile];
 
             // normal fields are fields that are the top layer so they go based on the order of the csv data (count)
-            var data = FieldValidator.ProcessFieldValidation(currentCsvData[count][field.CSVField], field);
+            var data = FieldValidationService.ProcessFieldValidation(currentCsvData[count][field.CSVField], field);
             jsonObject[field.JSONField] = data;
         }
     }
@@ -117,7 +117,7 @@ public static class JsonGenerator
                 }
 
                 var currentCsvData = csvData[field.CSVFile];
-                var data = FieldValidator.ProcessFieldValidation(currentCsvData[count][field.CSVField], field);
+                var data = FieldValidationService.ProcessFieldValidation(currentCsvData[count][field.CSVField], field);
                 jsonObjectNested[field.JSONField] = data;
             }
         });
@@ -248,7 +248,7 @@ public static class JsonGenerator
 
             // Check if a JSON object already exists for this key
             var existingKey = pkToJsonMapping.Keys.FirstOrDefault(pkDict => pkDict.ContainsValue(primaryKeyValue) && pkDict.ContainsKey(correctRelation.PrimaryKey.CSVFileName));
-            var value = FieldValidator.ProcessFieldValidation(fileData[field.CSVField], field);
+            var value = FieldValidationService.ProcessFieldValidation(fileData[field.CSVField], field);
 
             if (existingKey != null)
             {
@@ -327,7 +327,7 @@ public static class JsonGenerator
 
             // Check if a JSON object already exists for this primary key
             var existingKey = pkToJsonMapping.Keys.FirstOrDefault(pkDict => pkDict.ContainsKey(correctRelation.PrimaryKey.CSVFileName) && pkDict.ContainsValue(primaryKeyValue));
-            var value = FieldValidator.ProcessFieldValidation(fileData[field.CSVField].ToString(), field);
+            var value = FieldValidationService.ProcessFieldValidation(fileData[field.CSVField].ToString(), field);
 
             if (existingKey != null)
             {
@@ -356,7 +356,7 @@ public static class JsonGenerator
         {
             if (record.ContainsKey(field.CSVField))
             {
-                var value = FieldValidator.ProcessFieldValidation(record[field.CSVField], field);
+                var value = FieldValidationService.ProcessFieldValidation(record[field.CSVField], field);
 
                 var primaryKeyValue = rowNumber.ToString();
 

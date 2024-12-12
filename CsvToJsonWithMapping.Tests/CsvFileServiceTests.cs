@@ -4,7 +4,7 @@ using Moq;
 
 namespace CsvToJsonWithMapping.Tests
 {
-    public class CsvFileTests
+    public class CsvFileServiceTests
     {
         [Fact]
         public void CheckFileExists_ShouldThrowException_WhenFileDoesNotExist()
@@ -26,7 +26,7 @@ namespace CsvToJsonWithMapping.Tests
             var mockLogger = Mock.Of<ILogger>();
 
             // Act
-            var result = CsvFileReader.ReadCsvFiles(new[] { csvFilePath }, mockLogger);
+            var result = CsvFileReaderService.ReadCsvFiles(new[] { csvFilePath }, mockLogger);
 
             // Assert
             Assert.NotNull(result);

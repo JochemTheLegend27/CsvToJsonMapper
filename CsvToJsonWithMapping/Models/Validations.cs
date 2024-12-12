@@ -10,7 +10,7 @@
         // if fieldtype is a sting it is the max characters if it is a int its the max value
         public double? Max { get; set; } = null;
 
-        public bool ValidationsNeedToPass = false;
+        public bool ValidationsNeedToPass { get; set; } = false;
 
     }
 }

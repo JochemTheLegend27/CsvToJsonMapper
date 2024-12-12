@@ -2,7 +2,7 @@ using CsvHelper;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 
-public static class CsvFileReader
+public static class CsvFileReaderService
 {
     /// <summary>
     /// Reads multiple CSV files and returns the data as a dictionary.

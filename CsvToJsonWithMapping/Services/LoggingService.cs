@@ -24,6 +24,7 @@
         public static void ClearLogs()
         {
             _log.Clear();
+            _percentageComplete = 0;
         }
 
         public static void LogError(string category, string message)

@@ -2,7 +2,7 @@
 
 namespace CsvToJsonWithMapping.Services
 {
-    public static class FieldValidator
+    public static class FieldValidationService
     {
         private static readonly Dictionary<string, List<string>> _log = new();
 

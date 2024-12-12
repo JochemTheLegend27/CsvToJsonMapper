@@ -1,15 +1,14 @@
 using CsvToJsonWithMapping.Models;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Moq;
 
 namespace CsvToJsonWithMapping.Tests
 {
-    public class CsvDataJoinerTests
+    public class CsvDataJoinerServiceTests
     {
         private Mock<ILogger> mockLogger;
 
-        public CsvDataJoinerTests()
+        public CsvDataJoinerServiceTests()
         {
             mockLogger = new Mock<ILogger>();
         }

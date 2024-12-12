@@ -20,8 +20,8 @@ namespace CsvToJsonWithMapping.E2ETests
             var expectedOutput = TestScenarioHelper.LoadExpectedOutput(expectedOutputPath);
 
             // Act
-            var joinedData = CsvDataJoiner.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
-            var finalResult = JsonGenerator.GenerateJsonFromMappings(mapping, relations, csvData, joinedData, mockLogger.Object);
+            var joinedData = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
+            var finalResult = JsonGeneratorService.GenerateJsonFromMappings(mapping, relations, csvData, joinedData, mockLogger.Object);
 
             // Assert
             Assert.NotNull(finalResult);

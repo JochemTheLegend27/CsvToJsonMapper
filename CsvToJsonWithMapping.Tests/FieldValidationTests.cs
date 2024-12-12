@@ -4,7 +4,7 @@ using Xunit;
 
 namespace CsvToJsonWithMapping.Tests
 {
-    public class FieldValidatorTests
+    public class FieldValidationTests
     {
         [Fact]
         public void ProcessFieldValidation_ShouldPassAndConvert_WhenValidTypeAndNoErrors()
@@ -29,7 +29,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = FieldValidator.ProcessFieldValidation("valid", fieldMapping);
+            var result = FieldValidationService.ProcessFieldValidation("valid", fieldMapping);
 
             // Assert
             Assert.NotNull(result);
@@ -56,11 +56,12 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act & Assert
-            var exception = Assert.Throws<Exception>(() =>
-                FieldValidator.ProcessFieldValidation(null, fieldMapping)
-            );
+            LoggingService.ClearLogs();
+            FieldValidationService.ProcessFieldValidation(null, fieldMapping);
 
-            Assert.Contains("is required but", exception.Message);
+            var logs = LoggingService.GetLogs();
+            Assert.True(logs.ContainsKey("Validation - Error"));
+            Assert.True(logs["Validation - Error"].Count > 0);
         }
 
         [Fact]
@@ -83,7 +84,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = FieldValidator.ProcessFieldValidation("10", fieldMapping);
+            var result = FieldValidationService.ProcessFieldValidation("10", fieldMapping);
 
             // Assert
             Assert.NotNull(result);
@@ -110,12 +111,15 @@ namespace CsvToJsonWithMapping.Tests
                 }
             };
 
-            // Act & Assert
-            var exception = Assert.Throws<Exception>(() =>
-                FieldValidator.ProcessFieldValidation("20", fieldMapping)
-            );
 
-            Assert.Contains("too large", exception.Message);
+
+            // Act & Assert
+            LoggingService.ClearLogs();
+            FieldValidationService.ProcessFieldValidation("20", fieldMapping);
+
+            var logs = LoggingService.GetLogs();
+            Assert.True(logs.ContainsKey("Validation - Error"));
+            Assert.True(logs["Validation - Error"].Count > 0);
         }
 
         [Fact]
@@ -138,7 +142,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = FieldValidator.ProcessFieldValidation("50.5", fieldMapping);
+            var result = FieldValidationService.ProcessFieldValidation("50.5", fieldMapping);
 
             // Assert
             Assert.NotNull(result);
@@ -166,7 +170,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = FieldValidator.ProcessFieldValidation("true", fieldMapping);
+            var result = FieldValidationService.ProcessFieldValidation("true", fieldMapping);
 
             // Assert
             Assert.NotNull(result);
@@ -194,7 +198,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = FieldValidator.ProcessFieldValidation("", fieldMapping);
+            var result = FieldValidationService.ProcessFieldValidation("", fieldMapping);
 
             // Assert
             Assert.Null(result);

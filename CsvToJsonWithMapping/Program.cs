@@ -36,7 +36,7 @@ class Program
         CheckFileExists(relationsFilePath, "Relations file");
         CheckDirectoryExists(csvFilesDirectory, "CSV file directory");
 
-        logger.LogInformation("Begin met het verwerken van bestanden...");
+        logger.LogInformation("Begin processing files...");
 
         try
         {
@@ -72,14 +72,14 @@ class Program
                 throw new FileNotFoundException($"No CSV files found in directory: {csvFilesDirectory}");
             }
 
-            var csvData = CsvFileReader.ReadCsvFiles(csvFilePaths, logger);
+            var csvData = CsvFileReaderService.ReadCsvFiles(csvFilePaths, logger);
             logger.LogInformation($"CSV-data: {JsonSerializer.Serialize(csvData, new JsonSerializerOptions { WriteIndented = true })}");
 
-            var joinedData = CsvDataJoiner.JoinCsvDataBasedOnRelations(relations, csvData, logger);
+            var joinedData = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, logger);
 
-            var finalResult = JsonGenerator.GenerateJsonFromMappings(mapping, relations, csvData, joinedData, logger);
+            var finalResult = JsonGeneratorService.GenerateJsonFromMappings(mapping, relations, csvData, joinedData, logger);
 
-            JsonWriter.WriteJsonToFile(outputJsonPath, finalResult, logger);
+            JsonWriterService.WriteJsonToFile(outputJsonPath, finalResult, logger);
 
             LoggingService.DisplayProgress();
             LoggingService.DisplayLogs();
