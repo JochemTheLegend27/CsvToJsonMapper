@@ -58,11 +58,7 @@ namespace CsvToJsonWithMapping.Services
                 var requiredCsvFiles = GetUniqueCsvFiles(mapping, relations);
 
                 var csvFilePaths = Directory.GetFiles(csvFilesDirectory, "*.csv");
-                if (csvFilePaths.Length == 0)
-                {
-                    throw new FileNotFoundException($"No CSV files found in directory: {csvFilesDirectory}");
-                }
-
+               
                 foreach (var csvFile in requiredCsvFiles)
                 {
                     if (!csvFilePaths.Any(x => x.Contains(csvFile)))

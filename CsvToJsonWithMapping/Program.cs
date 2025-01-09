@@ -1,6 +1,7 @@
 using CsvToJsonWithMapping.Models;
 using CsvToJsonWithMapping.Services;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Text.Json;
 
 /* TODO: 
@@ -13,7 +14,7 @@ using System.Text.Json;
 
 class Program
 {
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
         // Get the base directory of the current application
         var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -24,7 +25,32 @@ class Program
         var relationsFilePath = Path.Combine(baseDirectory, @"..\..\..\CsvToJsonMappings\relations.json");
         var outputJsonPath = Path.Combine(baseDirectory, @"..\..\..\finalOutput.json");
 
-        CsvProcessorService csvProcessorService = new CsvProcessorService(new LoggingService(), new CsvFileReaderService(), new CsvDataJoinerService(), new JsonGeneratorService(new FieldValidationService()), new JsonWriterService());
-        csvProcessorService.ProcessCsvFilesAsync(csvFilesDirectory, mappingsFilePath, relationsFilePath, outputJsonPath).Wait();
+        // Initialize services
+        var logService = new LoggingService();
+        var csvProcessorService = new CsvProcessorService(
+            logService,
+            new CsvFileReaderService(),
+            new CsvDataJoinerService(),
+            new JsonGeneratorService(new FieldValidationService()),
+            new JsonWriterService()
+        );
+
+        // Subscribe to the progress update event
+        logService.OnProgressUpdated += progress => HandleProgressUpdated(progress, logService);
+
+        try
+        {
+            // Process CSV files and await the result
+            await csvProcessorService.ProcessCsvFilesAsync(csvFilesDirectory, mappingsFilePath, relationsFilePath, outputJsonPath);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Initialization failed: {ex.Message}");
+        }
+    }
+
+    private static void HandleProgressUpdated(double progress, LoggingService logService)
+    {
+        Console.WriteLine($"{logService.GetProgress()}% completed");
     }
 }

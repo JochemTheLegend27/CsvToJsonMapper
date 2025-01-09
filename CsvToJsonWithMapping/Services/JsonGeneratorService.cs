@@ -55,11 +55,11 @@ namespace CsvToJsonWithMapping.Services
                     throw new Exception($"JSON field missing in mapping for '{field.CSVField}'.");
                 }
 
-                if (field.CSVFile == null || field.CSVField == null)
+                if (string.IsNullOrEmpty(field.CSVFile) || string.IsNullOrEmpty(field.CSVField))
                 {
                     LogPublisher.PublishLogMessage("Warning: CSVData - Missing Field",
                         $"Warning: CSV file or field missing in mapping for '{field.JSONField}'.");
-                    jsonObject[field.JSONField] = field.Validations?.DefaultValue;
+                    jsonObject[field.JSONField] = _fieldValidationService.ProcessFieldValidation(null, field);
                     continue;
                 }
 
@@ -120,16 +120,14 @@ namespace CsvToJsonWithMapping.Services
 
             foreach (var field in nestedField.Fields)
             {
-                ProgressField();
-
                 if (field.JSONField == null)
                 {
                     throw new Exception($"JSON field missing in mapping for '{field.CSVField}'.");
                 }
 
-                if (field.CSVFile == null || field.CSVField == null)
+                if (string.IsNullOrEmpty(field.CSVFile) || string.IsNullOrEmpty(field.CSVField))
                 {
-                    jsonObjectNested[field.JSONField] = field.Validations?.DefaultValue;
+                    jsonObjectNested[field.JSONField] = _fieldValidationService.ProcessFieldValidation(null, field);
                 }
                 else
                 {
@@ -155,6 +153,7 @@ namespace CsvToJsonWithMapping.Services
                     var validatedValue = _fieldValidationService.ProcessFieldValidation(value, field);
                     jsonObjectNested[field.JSONField] = validatedValue;
                 }
+                ProgressField();
             }
 
             AddEmptyNestedFields(nestedField, jsonObjectNested);
@@ -177,14 +176,12 @@ namespace CsvToJsonWithMapping.Services
 
             foreach (var field in nestedField.Fields)
             {
-                ProgressField();
-
                 if (field.JSONField == null)
                 {
                     throw new Exception($"JSON field missing in mapping for '{field.CSVField}'.");
                 }
 
-                if (field.CSVFile == null || field.CSVField == null)
+                if (string.IsNullOrEmpty(field.CSVFile) || string.IsNullOrEmpty(field.CSVField))
                 {
                     jsonFieldsWithoutCsv.Add(field);
                 }
@@ -192,6 +189,7 @@ namespace CsvToJsonWithMapping.Services
                 {
                     ProcessFieldWithRelations(field, relations, csvData, joinedData, pkToJsonMapping);
                 }
+                ProgressField();
             }
 
             AddEmptyNestedFields(nestedField, pkToJsonMapping);
@@ -487,6 +485,5 @@ namespace CsvToJsonWithMapping.Services
             _processedFields++;
             LogPublisher.PublishProgress(_processedFields, _totalFields);
         }
-
     }
 }
