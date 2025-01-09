@@ -10,6 +10,7 @@ namespace CsvToJsonWithMapping.Tests
         public void ProcessFieldValidation_ShouldPassAndConvert_WhenValidTypeAndNoErrors()
         {
             // Arrange
+            var fieldValidationService = new FieldValidationService();
             var fieldMapping = new FieldMapping
             {
                 JSONField = "Field1",
@@ -29,7 +30,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = FieldValidationService.ProcessFieldValidation("valid", fieldMapping);
+            var result = fieldValidationService.ProcessFieldValidation("valid", fieldMapping);
 
             // Assert
             Assert.NotNull(result);
@@ -40,6 +41,8 @@ namespace CsvToJsonWithMapping.Tests
         public void ProcessFieldValidation_ShouldFail_IfRequiredFieldIsMissing()
         {
             // Arrange
+            var fieldValidationService = new FieldValidationService();
+            var loggingService = new LoggingService();
             var fieldMapping = new FieldMapping
             {
                 JSONField = "Field1",
@@ -56,18 +59,18 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act & Assert
-            LoggingService.ClearLogs();
-            FieldValidationService.ProcessFieldValidation(null, fieldMapping);
+            loggingService.ClearLogs();
+            fieldValidationService.ProcessFieldValidation(null, fieldMapping);
 
-            var logs = LoggingService.GetLogs();
-            Assert.True(logs.ContainsKey("Validation - Error"));
-            Assert.True(logs["Validation - Error"].Count > 0);
+            var logs = loggingService.GetLogs();
+            Assert.True(logs.Keys.Any(x => x.Contains("Error") && x.Contains("Missing Required Field")));
         }
 
         [Fact]
         public void ProcessFieldValidation_ShouldHandleIntValidationCorrectly()
         {
             // Arrange
+            var fieldValidationService = new FieldValidationService();
             var fieldMapping = new FieldMapping
             {
                 JSONField = "Field1",
@@ -84,7 +87,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = FieldValidationService.ProcessFieldValidation("10", fieldMapping);
+            var result = fieldValidationService.ProcessFieldValidation("10", fieldMapping);
 
             // Assert
             Assert.NotNull(result);
@@ -96,6 +99,8 @@ namespace CsvToJsonWithMapping.Tests
         public void ProcessFieldValidation_ShouldFail_IfOutOfRange()
         {
             // Arrange
+            var fieldValidationService = new FieldValidationService();
+            var loggingService = new LoggingService();
             var fieldMapping = new FieldMapping
             {
                 JSONField = "Field1",
@@ -111,21 +116,19 @@ namespace CsvToJsonWithMapping.Tests
                 }
             };
 
-
-
             // Act & Assert
-            LoggingService.ClearLogs();
-            FieldValidationService.ProcessFieldValidation("20", fieldMapping);
+            loggingService.ClearLogs();
+            fieldValidationService.ProcessFieldValidation("20", fieldMapping);
 
-            var logs = LoggingService.GetLogs();
-            Assert.True(logs.ContainsKey("Validation - Error"));
-            Assert.True(logs["Validation - Error"].Count > 0);
+            var logs = loggingService.GetLogs();
+            Assert.True(logs.Keys.Any(x => x.Contains("Error") && x.Contains("Max Range")));
         }
 
         [Fact]
         public void ProcessFieldValidation_ShouldHandleDoubleTypeValidation()
         {
             // Arrange
+            var fieldValidationService = new FieldValidationService();
             var fieldMapping = new FieldMapping
             {
                 JSONField = "Field2",
@@ -142,7 +145,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = FieldValidationService.ProcessFieldValidation("50.5", fieldMapping);
+            var result = fieldValidationService.ProcessFieldValidation("50.5", fieldMapping);
 
             // Assert
             Assert.NotNull(result);
@@ -154,6 +157,7 @@ namespace CsvToJsonWithMapping.Tests
         public void ProcessFieldValidation_ShouldHandleBooleanValidationCorrectly()
         {
             // Arrange
+            var fieldValidationService = new FieldValidationService();
             var fieldMapping = new FieldMapping
             {
                 JSONField = "Field3",
@@ -170,7 +174,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = FieldValidationService.ProcessFieldValidation("true", fieldMapping);
+            var result = fieldValidationService.ProcessFieldValidation("true", fieldMapping);
 
             // Assert
             Assert.NotNull(result);
@@ -182,6 +186,7 @@ namespace CsvToJsonWithMapping.Tests
         public void ProcessFieldValidation_ShouldHandleEmptyValuesAsNull()
         {
             // Arrange
+            var fieldValidationService = new FieldValidationService();
             var fieldMapping = new FieldMapping
             {
                 JSONField = "Field4",
@@ -198,7 +203,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = FieldValidationService.ProcessFieldValidation("", fieldMapping);
+            var result = fieldValidationService.ProcessFieldValidation("", fieldMapping);
 
             // Assert
             Assert.Null(result);

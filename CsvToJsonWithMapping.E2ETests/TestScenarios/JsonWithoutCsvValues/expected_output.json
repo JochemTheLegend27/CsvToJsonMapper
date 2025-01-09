@@ -1,0 +1,18 @@
+[
+  {
+    "Customers": [
+      {
+        "Customer.Name": "Alice",
+        "Customer.Id": ""
+      },
+      {
+        "Customer.Name": "Bob",
+        "Customer.Id": ""
+      },
+      {
+        "Customer.Name": "Charlie",
+        "Customer.Id": ""
+      }
+    ]
+  }
+] 

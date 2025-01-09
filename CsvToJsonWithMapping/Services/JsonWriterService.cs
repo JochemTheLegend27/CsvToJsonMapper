@@ -1,20 +1,23 @@
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
-public static class JsonWriterService
+namespace CsvToJsonWithMapping.Services
 {
-    public static void WriteJsonToFile(string filePath, List<Dictionary<string, object>> jsonData, ILogger logger)
+    public class JsonWriterService
     {
-        var jsonOutput = JsonSerializer.Serialize(jsonData, new JsonSerializerOptions { WriteIndented = true });
 
-        try
+        public void WriteJsonToFile(string filePath, List<Dictionary<string, object>> jsonData)
         {
-            File.WriteAllText(filePath, jsonOutput);
-            logger.LogInformation($"JSON output successfully written to file: {filePath}");
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Error writing JSON output to file '{filePath}': {ex.Message}");
+            var jsonOutput = JsonSerializer.Serialize(jsonData, new JsonSerializerOptions { WriteIndented = true });
+
+            try
+            {
+                File.WriteAllText(filePath, jsonOutput);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error writing JSON output to file '{filePath}': {ex.Message}");
+            }
         }
     }
 }

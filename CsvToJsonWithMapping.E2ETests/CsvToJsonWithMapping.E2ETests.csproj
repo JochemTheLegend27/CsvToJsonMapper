@@ -39,6 +39,30 @@
     <None Update="TestScenarios\DeepNestedWillBecomeArray\relations.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestScenarios\JsonWithoutCsvValues\csv_data.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\JsonWithoutCsvValues\expected_output.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\JsonWithoutCsvValues\mapping.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\JsonWithoutCsvValues\relations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\MultipleCsvIntoSingleField\csv_data.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\MultipleCsvIntoSingleField\expected_output.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\MultipleCsvIntoSingleField\mapping.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\MultipleCsvIntoSingleField\relations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestScenarios\SingleFileIntoNestedObjects\csv_data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

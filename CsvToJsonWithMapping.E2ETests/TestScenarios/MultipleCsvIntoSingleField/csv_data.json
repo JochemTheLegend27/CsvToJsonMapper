@@ -1,0 +1,25 @@
+{
+  "customers.csv": [
+    {
+      "Id": "1",
+      "FirstName": "Alice",
+      "LastName": "SecondName",
+      "Email": "alice@farm.com",
+      "Country": "USA"
+    },
+    {
+      "Id": "2",
+      "FirstName": "Bob",
+      "LastName": "SecondName",
+      "Email": "bob@vegetables.com",
+      "Country": "Canada"
+    },
+    {
+      "Id": "3",
+      "FirstName": "Charlie",
+      "LastName": "SecondName",
+      "Email": "charlie@fresh.com",
+      "Country": "Netherlands"
+    }
+  ]
+}

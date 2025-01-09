@@ -1,4 +1,5 @@
 ﻿using CsvToJsonWithMapping.E2ETests.Helpers;
+using CsvToJsonWithMapping.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Text.Json;
@@ -11,7 +12,12 @@ namespace CsvToJsonWithMapping.E2ETests
         [MemberData(nameof(GetTestScenarios))]
         public void TestEndToEndFlow(string relationsPath, string mappingPath, string csvDataPath, string expectedOutputPath)
         {
-            var mockLogger = new Mock<ILogger>();
+            var mockFieldValidationService = new Mock<FieldValidationService>();
+
+            // Instantiate your services with the required dependencies
+            var csvDataJoinerService = new CsvDataJoinerService();
+            var jsonGeneratorService = new JsonGeneratorService(mockFieldValidationService.Object);
+
 
             // Load JSON dynamically
             var relations = TestScenarioHelper.LoadRelations(relationsPath);
@@ -20,8 +26,8 @@ namespace CsvToJsonWithMapping.E2ETests
             var expectedOutput = TestScenarioHelper.LoadExpectedOutput(expectedOutputPath);
 
             // Act
-            var joinedData = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
-            var finalResult = JsonGeneratorService.GenerateJsonFromMappings(mapping, relations, csvData, joinedData, mockLogger.Object);
+            var joinedData = csvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData);
+            var finalResult = jsonGeneratorService.GenerateJsonFromMappings(mapping, relations, csvData, joinedData);
 
             // Assert
             Assert.NotNull(finalResult);

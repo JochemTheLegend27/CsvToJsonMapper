@@ -1,4 +1,5 @@
 using CsvToJsonWithMapping.Models;
+using CsvToJsonWithMapping.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -6,14 +7,7 @@ namespace CsvToJsonWithMapping.Tests
 {
     public class CsvDataJoinerServiceTests
     {
-        private Mock<ILogger> mockLogger;
-
-        public CsvDataJoinerServiceTests()
-        {
-            mockLogger = new Mock<ILogger>();
-        }
-
-        private void ValidateForeignKeyMatches(List<Dictionary<string, object>> foreignKeyData, Dictionary<string, string> expectedMatches)
+        private void ValidateForeignKeyMatches(IEnumerable<IDictionary<string, object?>> foreignKeyData, Dictionary<string, string> expectedMatches)
         {
             if (foreignKeyData == null) return;
 
@@ -29,8 +23,10 @@ namespace CsvToJsonWithMapping.Tests
         public void JoinCsvDataBasedOnRelations_ShouldReturnEmpty_WhenNoRelations()
         {
             // Arrange
+            var csvDataJoinerService = new CsvDataJoinerService();
+
             var relations = new List<Relation>();
-            var csvData = new Dictionary<string, List<Dictionary<string, string?>>>
+            var csvData = new Dictionary<string, IEnumerable<IDictionary<string, string?>>>
             {
                 {
                     "primary.csv", new List<Dictionary<string, string?>>
@@ -48,7 +44,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
+            var result = csvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData);
 
             // Assert
             Assert.Empty(result);
@@ -58,6 +54,8 @@ namespace CsvToJsonWithMapping.Tests
         public void JoinCsvDataBasedOnRelations_ShouldThrowException_WhenPrimaryFileMissing()
         {
             // Arrange
+            var csvDataJoinerService = new CsvDataJoinerService();
+
             var relations = new List<Relation>
             {
                 new Relation
@@ -67,7 +65,7 @@ namespace CsvToJsonWithMapping.Tests
                 }
             };
 
-            var csvData = new Dictionary<string, List<Dictionary<string, string?>>>
+            var csvData = new Dictionary<string, IEnumerable<IDictionary<string, string?>>>
             {
                 {
                     "foreign.csv", new List<Dictionary<string, string?>>
@@ -78,13 +76,15 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act & Assert
-            Assert.Throws<Exception>(() => CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object));
+            Assert.Throws<Exception>(() => csvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData));
         }
 
         [Fact]
         public void JoinCsvDataBasedOnRelations_ShouldHandleEmptyCSVFiles()
         {
             // Arrange
+            var csvDataJoinerService = new CsvDataJoinerService();
+
             var relations = new List<Relation>
             {
                 new Relation
@@ -94,14 +94,14 @@ namespace CsvToJsonWithMapping.Tests
                 }
             };
 
-            var csvData = new Dictionary<string, List<Dictionary<string, string?>>>
+            var csvData = new Dictionary<string, IEnumerable<IDictionary<string, string?>>>
             {
                 { "primary.csv", new List<Dictionary<string, string?>>() }, // Empty primary CSV
                 { "foreign.csv", new List<Dictionary<string, string?>>() }  // Empty foreign CSV
             };
 
             // Act
-            var result = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
+            var result = csvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData);
 
             // Assert
             Assert.NotNull(result);
@@ -114,6 +114,8 @@ namespace CsvToJsonWithMapping.Tests
         public void JoinCsvDataBasedOnRelations_ShouldJoinWithMultipleFKs_WhenSamePrimaryKeyMatchesMultipleFks()
         {
             // Arrange
+            var csvDataJoinerService = new CsvDataJoinerService();
+
             var relations = new List<Relation>
             {
                 new Relation
@@ -128,7 +130,7 @@ namespace CsvToJsonWithMapping.Tests
                 }
             };
 
-            var csvData = new Dictionary<string, List<Dictionary<string, string?>>>
+            var csvData = new Dictionary<string, IEnumerable<IDictionary<string, string?>>>
             {
                 {
                     "primary.csv", new List<Dictionary<string, string?>>
@@ -151,7 +153,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
+            var result = csvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData);
 
             // Assert
             Assert.NotNull(result);
@@ -162,7 +164,11 @@ namespace CsvToJsonWithMapping.Tests
 
             foreach (var record in primaryResult)
             {
-                var foreignKeyData1 = record.GetValueOrDefault("foreign1.csv") as List<Dictionary<string, object>>;
+                var foreignKeyData1 = new List<Dictionary<string, object?>>();
+                if (record.TryGetValue("foreign1.csv", out var foreignData1))
+                {
+                    foreignKeyData1 = foreignData1 as List<Dictionary<string, object?>>;
+                }
                 var expectedMatches1 = new Dictionary<string, string>
                 {
                     { "1", "Foreign1" },
@@ -170,7 +176,11 @@ namespace CsvToJsonWithMapping.Tests
                 };
                 ValidateForeignKeyMatches(foreignKeyData1, expectedMatches1);
 
-                var foreignKeyData2 = record.GetValueOrDefault("foreign2.csv") as List<Dictionary<string, object>>;
+                var foreignKeyData2 = new List<Dictionary<string, object?>>();
+                if (record.TryGetValue("foreign2.csv", out var foreignData2))
+                {
+                    foreignKeyData2 = foreignData2 as List<Dictionary<string, object?>>;
+                }
                 var expectedMatches2 = new Dictionary<string, string>
                 {
                     { "2", "Foreign3" },
@@ -184,6 +194,7 @@ namespace CsvToJsonWithMapping.Tests
         public void JoinCsvDataBasedOnRelations_ShouldMatchCorrectFKsToCorrectPKs_RegardlessOfLoadOrder()
         {
             // Arrange
+            var csvDataJoinerService = new CsvDataJoinerService();
             var relations = new List<Relation>
             {
                 new Relation
@@ -198,7 +209,7 @@ namespace CsvToJsonWithMapping.Tests
                 }
             };
 
-            var csvData = new Dictionary<string, List<Dictionary<string, string?>>>
+            var csvData = new Dictionary<string, IEnumerable<IDictionary<string, string?>>>
             {
                 {
                     "primary.csv", new List<Dictionary<string, string?>>
@@ -224,7 +235,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
+            var result = csvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData);
 
             // Assert
             Assert.NotNull(result);
@@ -235,7 +246,11 @@ namespace CsvToJsonWithMapping.Tests
 
             foreach (var record in primaryResults)
             {
-                var foreignKeyData1 = record.GetValueOrDefault("foreign1.csv") as List<Dictionary<string, object>>;
+                var foreignKeyData1 = new List<Dictionary<string, object?>>();
+                if (record.TryGetValue("foreign1.csv", out var foreignData1))
+                {
+                    foreignKeyData1 = foreignData1 as List<Dictionary<string, object?>>;
+                }
                 var expectedMatches1 = new Dictionary<string, string>
                 {
                     { "1", "Foreign1" },
@@ -243,7 +258,11 @@ namespace CsvToJsonWithMapping.Tests
                 };
                 ValidateForeignKeyMatches(foreignKeyData1, expectedMatches1);
 
-                var foreignKeyData2 = record.GetValueOrDefault("foreign2.csv") as List<Dictionary<string, object>>;
+                var foreignKeyData2 = new List<Dictionary<string, object?>>();
+                if (record.TryGetValue("foreign2.csv", out var foreignData2))
+                {
+                    foreignKeyData2 = foreignData2 as List<Dictionary<string, object?>>;
+                }
                 var expectedMatches2 = new Dictionary<string, string>
                 {
                     { "2", "Foreign3" },
@@ -257,6 +276,7 @@ namespace CsvToJsonWithMapping.Tests
         public void JoinCsvDataBasedOnRelations_ShouldHandleOnlyPrimaryKey_WhenNoForeignKeyMatchesExist()
         {
             // Arrange
+            var csvDataJoinerService = new CsvDataJoinerService();
             var relations = new List<Relation>
             {
                 new Relation
@@ -266,7 +286,7 @@ namespace CsvToJsonWithMapping.Tests
                 }
             };
 
-            var csvData = new Dictionary<string, List<Dictionary<string, string?>>>
+            var csvData = new Dictionary<string, IEnumerable<IDictionary<string, string?>>>
             {
                 {
                     "primary.csv", new List<Dictionary<string, string?>>
@@ -278,7 +298,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
+            var result = csvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData);
 
             // Assert
             Assert.NotNull(result);
@@ -289,6 +309,7 @@ namespace CsvToJsonWithMapping.Tests
         public void JoinCsvDataBasedOnRelations_ShouldHandleMultipleRelations_WhenAForeignFileRelatesToMultiplePrimaryKeys()
         {
             // Arrange
+            var csvDataJoinerService = new CsvDataJoinerService();
             var relations = new List<Relation>
             {
                 new Relation
@@ -303,7 +324,7 @@ namespace CsvToJsonWithMapping.Tests
                 }
             };
 
-            var csvData = new Dictionary<string, List<Dictionary<string, string?>>>
+            var csvData = new Dictionary<string, IEnumerable<IDictionary<string, string?>>>
             {
                 {
                     "primary1.csv", new List<Dictionary<string, string?>>
@@ -331,7 +352,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
+            var result = csvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData);
 
             // Assert
             Assert.NotNull(result);
@@ -341,7 +362,11 @@ namespace CsvToJsonWithMapping.Tests
 
             foreach (var record in primary1Result)
             {
-                var foreignKeyData = record.GetValueOrDefault("foreign.csv") as List<Dictionary<string, object>>;
+                var foreignKeyData = new List<Dictionary<string, object?>>();
+                if (record.TryGetValue("foreign.csv", out var foreignData))
+                {
+                    foreignKeyData = foreignData as List<Dictionary<string, object?>>;
+                }
                 if (foreignKeyData == null) continue;
 
                 var expectedMatches = new Dictionary<string, string>
@@ -359,7 +384,11 @@ namespace CsvToJsonWithMapping.Tests
 
             foreach (var record in primary2Result)
             {
-                var foreignKeyData = record.GetValueOrDefault("foreign.csv") as List<Dictionary<string, object>>;
+                var foreignKeyData = new List<Dictionary<string, object?>>();
+                if (record.TryGetValue("foreign.csv", out var foreignData))
+                {
+                    foreignKeyData = foreignData as List<Dictionary<string, object?>>;
+                }
                 if (foreignKeyData == null) continue;
 
                 var expectedMatches = new Dictionary<string, string>
@@ -372,11 +401,11 @@ namespace CsvToJsonWithMapping.Tests
             }
         }
 
-
         [Fact]
         public void JoinCsvDataBasedOnRelations_ShouldHandleNestedFKRelationships()
         {
             // Arrange
+            var csvDataJoinerService = new CsvDataJoinerService();
             var relations = new List<Relation>
             {
                 // FK1 points to PK1
@@ -393,7 +422,7 @@ namespace CsvToJsonWithMapping.Tests
                 }
             };
 
-            var csvData = new Dictionary<string, List<Dictionary<string, string?>>>
+            var csvData = new Dictionary<string, IEnumerable<IDictionary<string, string?>>>
             {
                 {
                     "customers.csv", new List<Dictionary<string, string?>>
@@ -419,7 +448,7 @@ namespace CsvToJsonWithMapping.Tests
             };
 
             // Act
-            var result = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, mockLogger.Object);
+            var result = csvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData);
 
             // Assert
             Assert.NotNull(result);
@@ -430,31 +459,38 @@ namespace CsvToJsonWithMapping.Tests
 
             foreach (var record in customerResults)
             {
-                var orderData = record.GetValueOrDefault("orders.csv") as List<Dictionary<string, object>>;
-                if (orderData == null) continue;
-
-                foreach (var order in orderData)
+                if (record.TryGetValue("orders.csv", out var orderData))
                 {
-                    var productData = order.GetValueOrDefault("products.csv") as List<Dictionary<string, object>>;
-                    Assert.NotNull(productData);
+                    var orderDataEnumerable = orderData as IEnumerable<IDictionary<string, object?>>;
 
-                    if (order["OrderId"]?.ToString() == "100")
+                    if (orderDataEnumerable != null)
                     {
-                        var match1 = productData.FirstOrDefault(p => p["FKProductId"]?.ToString() == "100");
-                        Assert.NotNull(match1);
-                        Assert.Equal("Tomatoes", match1["ProductName"]);
-                    }
+                        foreach (var order in orderDataEnumerable)
+                        {
+                            if (order.TryGetValue("products.csv", out var productData))
+                            {
+                                var productDataEnumerable = productData as IEnumerable<IDictionary<string, object?>>;
 
-                    if (order["OrderId"]?.ToString() == "200")
-                    {
-                        var match2 = productData.FirstOrDefault(p => p["FKProductId"]?.ToString() == "200");
-                        Assert.NotNull(match2);
-                        Assert.Equal("Cucumbers", match2["ProductName"]);
+                                Assert.NotNull(productDataEnumerable);
+
+                                if (order["OrderId"]?.ToString() == "100")
+                                {
+                                    var match1 = productDataEnumerable.FirstOrDefault(p => p["FKProductId"]?.ToString() == "100");
+                                    Assert.NotNull(match1);
+                                    Assert.Equal("Tomatoes", match1["ProductName"]);
+                                }
+
+                                if (order["OrderId"]?.ToString() == "200")
+                                {
+                                    var match2 = productDataEnumerable.FirstOrDefault(p => p["FKProductId"]?.ToString() == "200");
+                                    Assert.NotNull(match2);
+                                    Assert.Equal("Cucumbers", match2["ProductName"]);
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-
-
     }
 }

@@ -1,0 +1,25 @@
+[
+  {
+    "Customers": [
+      {
+        "Customer.Id": "1",
+        "Customer.Name": "Alice SecondName",
+        "Customer.Contact.Email": "alice@farm.com",
+        "Customer.Contact.Country": "USA"
+      },
+      {
+        "Customer.Id": "2",
+        "Customer.Name": "Bob SecondName",
+        "Customer.Contact.Email": "bob@vegetables.com",
+        "Customer.Contact.Country": "Canada"
+      },
+      {
+        "Customer.Id": "3",
+        "Customer.Name": "Charlie SecondName",
+        "Customer.Contact.Email": "charlie@fresh.com",
+        "Customer.Contact.Country": "Netherlands"
+      }
+    ]
+  }
+] 
+  

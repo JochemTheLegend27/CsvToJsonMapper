@@ -2,11 +2,10 @@
 
 namespace CsvToJsonWithMapping.Services
 {
-    public static class FieldValidationService
+    public class FieldValidationService
     {
-        private static readonly Dictionary<string, List<string>> _log = new();
 
-        public static object? ProcessFieldValidation(string? value, FieldMapping field)
+        public object? ProcessFieldValidation(string? value, FieldMapping field)
         {
 
             value = string.IsNullOrWhiteSpace(value) || value.Trim().ToLowerInvariant() == "null" ? null : value;
@@ -27,70 +26,88 @@ namespace CsvToJsonWithMapping.Services
             {
                 "string" => ValidateString(result, field),
                 "int" => ValidateNumeric<int>(result, field, int.TryParse),
+                "long" => ValidateNumeric<long>(result, field, long.TryParse),
                 "double" => ValidateNumeric<double>(result, field, double.TryParse),
                 "bool" => ValidateBoolean(result, field),
-                _ => throw new Exception($"Field type '{field.Validations.Type}' is not supported.")
+                _ => ValidateString(result, field),
             };
         }
 
-        private static void ValidateRequiredField(object? result, FieldMapping field)
+        private void ValidateRequiredField(object? result, FieldMapping field)
         {
             if (field.Validations.Required && result == null)
             {
-                HandleValidationError($"Field '{field.JSONField}' is required but '{field.CSVField}' was null.", field.Validations.ValidationsNeedToPass);
+                HandleValidationError($"The CSV field '{field.CSVField}' in the file '{field.CSVFile}' is missing a value. " +
+                    $"This may lead to incorrect or unexpected values in the target field '{field.JSONField}'.",
+                    field.Validations.ValidationsNeedToPass,
+                    $"{field.CSVFile} - {field.CSVField}: Missing Required Field");
             }
         }
 
-        private static string ValidateString(object result, FieldMapping field)
+        private string ValidateString(object result, FieldMapping field)
         {
             var stringValue = result.ToString()!;
             ValidateMinMax(stringValue.Length, field, field.Validations.Min, field.Validations.Max);
             return stringValue;
         }
 
-        private static T ValidateNumeric<T>(object result, FieldMapping field, TryParseHandler<T> tryParse)
+        private T ValidateNumeric<T>(object result, FieldMapping field, TryParseHandler<T> tryParse)
         {
             if (!tryParse(result.ToString(), out var numericValue))
             {
-                HandleValidationError($"Field '{field.JSONField}' expects a {typeof(T).Name} but got '{result}'.", field.Validations.ValidationsNeedToPass);
+                HandleValidationError($"The CSV field '{field.CSVField}' in the file '{field.CSVFile}' is expecting a value of type {typeof(T).Name}, but it received '{result}'. " +
+                    $"This could lead to unexpected behavior or incorrect values in the target field '{field.JSONField}'.",
+                    field.Validations.ValidationsNeedToPass,
+                    $"{field.CSVFile} - {field.CSVField}: {typeof(T).Name} Type Validation");
             }
 
             ValidateMinMax(Convert.ToDouble(numericValue), field, field.Validations.Min, field.Validations.Max);
             return numericValue!;
         }
 
-        private static bool ValidateBoolean(object result, FieldMapping field)
+        private bool ValidateBoolean(object result, FieldMapping field)
         {
             if (!bool.TryParse(result.ToString(), out var boolValue))
             {
-                HandleValidationError($"Field '{field.JSONField}' expects a boolean but got '{result}'.", field.Validations.ValidationsNeedToPass);
+                HandleValidationError($"The JSON field '{field.JSONField}' is expecting a boolean value, but the received value was '{result}'. " +
+                    $"This may result in unexpected or incorrect behavior in the target field.",
+                    field.Validations.ValidationsNeedToPass,
+                    $"{field.CSVFile} - {field.CSVField}: Boolean Type Validation");
             }
 
             return boolValue;
         }
 
-        private static void ValidateMinMax<T>(T value, FieldMapping field, T? min, T? max) where T : struct, IComparable<T>
+        private void ValidateMinMax<T>(T value, FieldMapping field, T? min, T? max) where T : struct, IComparable<T>
         {
             if (min.HasValue && value.CompareTo(min.Value) < 0)
             {
-                HandleValidationError($"Field '{field.JSONField}' is too small (minimum: {min}).", field.Validations.ValidationsNeedToPass);
+                HandleValidationError($"The JSON field '{field.JSONField}' has a minimum value of {min}, but the provided value '{value}' is smaller than the required minimum. " +
+                     $"This could cause issues with data processing or unexpected results in the target field.",
+                     field.Validations.ValidationsNeedToPass,
+                     $"{field.CSVFile} - {field.CSVField}: Min Range Validation");
             }
 
             if (max.HasValue && value.CompareTo(max.Value) > 0)
             {
-                HandleValidationError($"Field '{field.JSONField}' is too large (maximum: {max}).", field.Validations.ValidationsNeedToPass);
+                HandleValidationError(
+                    $"The JSON field '{field.JSONField}' has a maximum value of {max}, but the provided value '{value}' exceeds the maximum allowed. " +
+                    $"This could lead to incorrect or unintended results in the target field.",
+                    field.Validations.ValidationsNeedToPass,
+                    $"{field.CSVFile} - {field.CSVField}: Max Range Validation");
             }
         }
 
-        private static void HandleValidationError(string message, bool validationsNeedToPass)
+        private void HandleValidationError(string message, bool validationsNeedToPass, string validationType)
         {
+            // Provide more detailed logging with categories and explanations
             if (validationsNeedToPass)
             {
-                LoggingService.LogError("Validation",message);
+                LogPublisher.PublishLogMessage($"Error: {validationType}", message);
             }
             else
             {
-                LoggingService.LogWarning("Validation", message);
+               LogPublisher.PublishLogMessage($"Warning: {validationType}", message);
             }
         }
 

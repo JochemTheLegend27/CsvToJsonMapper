@@ -15,10 +15,10 @@ namespace CsvToJsonWithMapping.E2ETests.Helpers
             return JsonSerializer.Deserialize<Mapping>(File.ReadAllText(path)) ?? new Mapping();
         }
 
-        public static Dictionary<string, List<Dictionary<string, string>>> LoadCsvData(string path)
+        public static Dictionary<string, IEnumerable<IDictionary<string, string?>>> LoadCsvData(string path)
         {
-            return JsonSerializer.Deserialize<Dictionary<string, List<Dictionary<string, string>>>>(File.ReadAllText(path))
-                   ?? new Dictionary<string, List<Dictionary<string, string>>>();
+            return JsonSerializer.Deserialize<Dictionary<string, IEnumerable<IDictionary<string, string?>>>>(File.ReadAllText(path))
+                   ?? new Dictionary<string, IEnumerable<IDictionary<string, string?>>>();
         }
 
         public static object LoadExpectedOutput(string path)

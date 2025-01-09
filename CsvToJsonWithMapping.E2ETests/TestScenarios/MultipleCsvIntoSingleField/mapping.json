@@ -1,0 +1,35 @@
+{
+  "NestedFields": [
+    {
+      "JSONNestedType": "Array",
+      "JSONNestedFieldName": "Customers",
+      "Fields": [
+        {
+          "CSVField": "Id",
+          "CSVFile": "customers.csv",
+          "JSONField": "Customer.Id"
+        },
+        {
+          "CSVField": "FirstName",
+          "CSVFile": "customers.csv",
+          "JSONField": "Customer.Name"
+        },
+        {
+          "CSVField": "LastName",
+          "CSVFile": "customers.csv",
+          "JSONField": "Customer.Name"
+        },
+        {
+          "CSVField": "Email",
+          "CSVFile": "customers.csv",
+          "JSONField": "Customer.Contact.Email"
+        },
+        {
+          "CSVField": "Country",
+          "CSVFile": "customers.csv",
+          "JSONField": "Customer.Contact.Country"
+        }
+      ]
+    }
+  ]
+}

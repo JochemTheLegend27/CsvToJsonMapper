@@ -2,39 +2,39 @@ using CsvHelper;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 
-public static class CsvFileReaderService
+namespace CsvToJsonWithMapping.Services
 {
-    /// <summary>
-    /// Reads multiple CSV files and returns the data as a dictionary.
-    /// </summary>
-    /// <param name="csvFilePaths">The paths of the CSV files to read.</param>
-    /// <param name="logger">The logger to log information and errors.</param>
-    /// <returns>A dictionary containing the CSV data, where the key is the file name with extension and the value is a list of dictionaries representing the records.</returns>
-    public static Dictionary<string, List<Dictionary<string, string>>> ReadCsvFiles(IEnumerable<string> csvFilePaths, ILogger logger)
+    public class CsvFileReaderService
     {
-        var csvData = new Dictionary<string, List<Dictionary<string, string>>>();
-
-        foreach (var filePath in csvFilePaths)
+        /// <summary>
+        /// Streams CSV files and returns their data incrementally.
+        /// </summary>
+        /// <param name="csvFilePaths">Paths of the CSV files to read.</param>
+        /// <returns>An enumerable for each file's data, allowing for streaming.</returns>
+        public Dictionary<string, IEnumerable<IDictionary<string, string?>>> StreamCsvFiles(IEnumerable<string> csvFilePaths)
         {
-            try
-            {
-                using var reader = new StreamReader(filePath);
-                using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            var csvData = new Dictionary<string, IEnumerable<IDictionary<string, string?>>>();
 
+            foreach (var filePath in csvFilePaths)
+            {
                 string fileNameWithExtension = Path.GetFileName(filePath);
-                var records = csv.GetRecords<dynamic>().ToList();
-                csvData[fileNameWithExtension] = records.Select(record => (IDictionary<string, object>)record)
-                                            .Select(dict => dict.ToDictionary(k => k.Key, k => k.Value?.ToString() ?? "null"))
-                                            .ToList();
 
-                logger.LogInformation($"Successfully read CSV file: {fileNameWithExtension}");
+                csvData[fileNameWithExtension] = StreamCsv(filePath);
             }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error reading CSV file '{filePath}': {ex.Message}");
-            }
+
+            return csvData;
         }
 
-        return csvData;
+        private IEnumerable<IDictionary<string, string?>> StreamCsv(string filePath)
+        {
+            using var reader = new StreamReader(filePath);
+            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+
+            foreach (var record in csv.GetRecords<dynamic>())
+            {
+                yield return ((IDictionary<string, object>)record)
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value?.ToString());
+            }
+        }
     }
 }

@@ -15,14 +15,6 @@ class Program
 {
     static void Main(string[] args)
     {
-        // Set up logging
-        using var loggerFactory = LoggerFactory.Create(builder =>
-        {
-            builder.AddConsole();
-            builder.AddDebug();
-        });
-        var logger = loggerFactory.CreateLogger<Program>();
-
         // Get the base directory of the current application
         var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -32,77 +24,7 @@ class Program
         var relationsFilePath = Path.Combine(baseDirectory, @"..\..\..\CsvToJsonMappings\relations.json");
         var outputJsonPath = Path.Combine(baseDirectory, @"..\..\..\finalOutput.json");
 
-        CheckFileExists(mappingsFilePath, "Mapping file");
-        CheckFileExists(relationsFilePath, "Relations file");
-        CheckDirectoryExists(csvFilesDirectory, "CSV file directory");
-
-        logger.LogInformation("Begin processing files...");
-
-        try
-        {
-            var relationsJson = File.ReadAllText(relationsFilePath);
-            var relations = JsonSerializer.Deserialize<List<Relation>>(relationsJson);
-
-            logger.LogInformation($"Relations: {JsonSerializer.Serialize(relations, new JsonSerializerOptions { WriteIndented = true })}");
-
-            var duplicateRelations = relations
-                .GroupBy(x => new { x.ForeignKey.CSVFileName, x.ForeignKey.CSVField })
-                .Where(g => g.Count() > 1)
-                .Select(y => y.Key)
-                .ToList();
-
-            if (duplicateRelations.Any())
-            {
-                throw new Exception($"Duplicate relations found in relations file.\n{JsonSerializer.Serialize(duplicateRelations, new JsonSerializerOptions { WriteIndented = true })}");
-            }
-
-            var mappingsJson = File.ReadAllText(mappingsFilePath);
-            var mapping = JsonSerializer.Deserialize<Mapping>(mappingsJson);
-
-            if (mapping == null)
-            {
-                throw new Exception("Could not deserialize mapping file.");
-            }
-
-            logger.LogInformation($"Mapping: {JsonSerializer.Serialize(mapping, new JsonSerializerOptions { WriteIndented = true })}");
-
-            var csvFilePaths = Directory.GetFiles(csvFilesDirectory, "*.csv");
-            if (csvFilePaths.Length == 0)
-            {
-                throw new FileNotFoundException($"No CSV files found in directory: {csvFilesDirectory}");
-            }
-
-            var csvData = CsvFileReaderService.ReadCsvFiles(csvFilePaths, logger);
-            logger.LogInformation($"CSV-data: {JsonSerializer.Serialize(csvData, new JsonSerializerOptions { WriteIndented = true })}");
-
-            var joinedData = CsvDataJoinerService.JoinCsvDataBasedOnRelations(relations, csvData, logger);
-
-            var finalResult = JsonGeneratorService.GenerateJsonFromMappings(mapping, relations, csvData, joinedData, logger);
-
-            JsonWriterService.WriteJsonToFile(outputJsonPath, finalResult, logger);
-
-            LoggingService.DisplayProgress();
-            LoggingService.DisplayLogs();
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"An error occurred during processing: {ex.Message}");
-        }
-    }
-
-    internal static void CheckFileExists(string filePath, string fileType)
-    {
-        if (!File.Exists(filePath))
-        {
-            throw new FileNotFoundException($"{fileType} not found at path: {filePath}");
-        }
-    }
-
-    internal static void CheckDirectoryExists(string directoryPath, string directoryType)
-    {
-        if (!Directory.Exists(directoryPath))
-        {
-            throw new DirectoryNotFoundException($"{directoryType} not found: {directoryPath}");
-        }
+        CsvProcessorService csvProcessorService = new CsvProcessorService(new LoggingService(), new CsvFileReaderService(), new CsvDataJoinerService(), new JsonGeneratorService(new FieldValidationService()), new JsonWriterService());
+        csvProcessorService.ProcessCsvFilesAsync(csvFilesDirectory, mappingsFilePath, relationsFilePath, outputJsonPath).Wait();
     }
 }
