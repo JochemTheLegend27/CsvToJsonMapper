@@ -53,6 +53,11 @@ namespace CsvToJsonWithMapping.Services
 
                     foreach (var pkRecord in primaryKeyData)
                     {
+                        if (!pkRecord.ContainsKey(primaryKeyField))
+                        {
+                            LogPublisher.PublishLogMessage("Error: CSVData - Missing column", $"The column '{primaryKeyField}' is not found in '{primaryKeyFile}'");
+                            break;
+                        }
                         var pkValue = pkRecord[primaryKeyField];
                         // Create a new record if not found
                         var enrichedRecord = pkRecord.ToDictionary(
@@ -85,15 +90,22 @@ namespace CsvToJsonWithMapping.Services
 
                     // Create a lookup of FK records by foreign key value
                     var foreignKeyLookup = foreignKeyData
-                        .GroupBy(record => record[foreignKeyField])
-                        .ToDictionary(
-                            group => group.Key,
-                            group => group.ToList()
-                        );
+                    .Where(record => record.ContainsKey(foreignKeyField) && record[foreignKeyField] != null)
+                    .GroupBy(record => record[foreignKeyField])
+                    .ToDictionary(
+                        group => group.Key,
+                        group => group.ToList()
+                    );
 
                     // Process each PK record
                     foreach (var pkRecord in primaryKeyData)
                     {
+                        if (!pkRecord.ContainsKey(primaryKeyField))
+                        {
+                            LogPublisher.PublishLogMessage("Error: CSVData - Missing column", $"The column '{primaryKeyField}' is not found in '{primaryKeyFile}'");
+                            break;
+                        }
+
                         var pkValue = pkRecord[primaryKeyField];
 
                         // Check if a record with this PK already exists in the result

@@ -247,67 +247,69 @@ namespace CsvToJsonWithMapping.Services
 
             if (correctJoined == null)
             {
-                throw new Exception($"No joined data found for '{field.CSVFile}'.\nBut was expected");
+                LogPublisher.PublishLogMessage("Error: CSVData - Missing joined data", $"No joined data found for '{field.CSVFile}'. Ensure that the CSV file contains all the required columns for the join operation.");
             }
-
-            // Process the joined data
-            foreach (var record in correctJoined)
+            else
             {
-                var primaryKeyValue = record[correctRelation.PrimaryKey.CSVField]?.ToString();
-                if (primaryKeyValue == null)
+                // Process the joined data
+                foreach (var record in correctJoined)
                 {
-                    LogPublisher.PublishLogMessage("Warning: CSVData - Missing Primary Key",
-                        $"Warning: The primary key value for '{correctRelation.PrimaryKey.CSVField}' is missing in the current record from the file '{field.CSVFile}'.");
-                    continue; // Skip this record to avoid further processing issues
-                }
-
-                if (record.ContainsKey(field.CSVFile) == false)
-                {
-                    LogPublisher.PublishLogMessage($"Warning: CSVData - {field.CSVFile} Missing File Data",
-                        $"Warning: No data found for file '{field.CSVFile}' in the current record for primary key '{correctRelation.PrimaryKey.CSVField}' with value '{primaryKeyValue}'. Ensure the file contains valid data for the expected field '{field.CSVField}' in the record. This could indicate missing data in the CSV.");
-                    continue;
-                }
-
-                var fileData = (record[field.CSVFile] as IEnumerable<IDictionary<string, string>>)?.FirstOrDefault();
-
-                if (fileData == null)
-                {
-                    LogPublisher.PublishLogMessage($"Warning: CSVData - {field.CSVFile} Missing File Data",
-                         $"Warning: No data found for file '{field.CSVFile}' in the current record for primary key '{correctRelation.PrimaryKey.CSVField}' with value '{primaryKeyValue}'. Ensure the file contains valid data for the expected field '{field.CSVField}' in the record. This could indicate missing data in the CSV.");
-                    continue;
-                }
-
-                if (!fileData.ContainsKey(field.CSVField))
-                {
-                    LogPublisher.PublishLogMessage("Warning: CSVData - Missing Field",
-                        $"Warning: The field '{field.CSVField}' was not found in the data for CSV file '{field.CSVFile}'. Verify that the field exists and is correctly named.");
-                    continue;
-                }
-
-
-                // Check if a JSON object already exists for this key
-                var existingKey = pkToJsonMapping.Keys.FirstOrDefault(pkDict => pkDict.ContainsValue(primaryKeyValue) && pkDict.ContainsKey(correctRelation.PrimaryKey.CSVFileName));
-                var value = _fieldValidationService.ProcessFieldValidation(fileData[field.CSVField], field);
-
-                if (existingKey != null)
-                {
-                    var existingJson = pkToJsonMapping[existingKey];
-
-                    if (existingJson.ContainsKey(field.JSONField))
+                    var primaryKeyValue = record[correctRelation.PrimaryKey.CSVField]?.ToString();
+                    if (primaryKeyValue == null)
                     {
-                        existingJson[field.JSONField] = value;
+                        LogPublisher.PublishLogMessage("Warning: CSVData - Missing Primary Key",
+                            $"Warning: The primary key value for '{correctRelation.PrimaryKey.CSVField}' is missing in the current record from the file '{field.CSVFile}'.");
+                        continue; // Skip this record to avoid further processing issues
+                    }
+
+                    if (record.ContainsKey(field.CSVFile) == false)
+                    {
+                        LogPublisher.PublishLogMessage($"Warning: CSVData - {field.CSVFile} Missing File Data",
+                            $"Warning: No data found for file '{field.CSVFile}' in the current record for primary key '{correctRelation.PrimaryKey.CSVField}' with value '{primaryKeyValue}'. Ensure the file contains valid data for the expected field '{field.CSVField}' in the record. This could indicate missing data in the CSV.");
+                        continue;
+                    }
+
+                    var fileData = (record[field.CSVFile] as IEnumerable<IDictionary<string, string>>)?.FirstOrDefault();
+
+                    if (fileData == null)
+                    {
+                        LogPublisher.PublishLogMessage($"Warning: CSVData - {field.CSVFile} Missing File Data",
+                             $"Warning: No data found for file '{field.CSVFile}' in the current record for primary key '{correctRelation.PrimaryKey.CSVField}' with value '{primaryKeyValue}'. Ensure the file contains valid data for the expected field '{field.CSVField}' in the record. This could indicate missing data in the CSV.");
+                        continue;
+                    }
+
+                    if (!fileData.ContainsKey(field.CSVField))
+                    {
+                        LogPublisher.PublishLogMessage("Warning: CSVData - Missing Field",
+                            $"Warning: The field '{field.CSVField}' was not found in the data for CSV file '{field.CSVFile}'. Verify that the field exists and is correctly named.");
+                        continue;
+                    }
+
+
+                    // Check if a JSON object already exists for this key
+                    var existingKey = pkToJsonMapping.Keys.FirstOrDefault(pkDict => pkDict.ContainsValue(primaryKeyValue) && pkDict.ContainsKey(correctRelation.PrimaryKey.CSVFileName));
+                    var value = _fieldValidationService.ProcessFieldValidation(fileData[field.CSVField], field);
+
+                    if (existingKey != null)
+                    {
+                        var existingJson = pkToJsonMapping[existingKey];
+
+                        if (existingJson.ContainsKey(field.JSONField))
+                        {
+                            existingJson[field.JSONField] = value;
+                        }
+                        else
+                        {
+                            existingJson.Add(field.JSONField, value);
+                        }
                     }
                     else
                     {
-                        existingJson.Add(field.JSONField, value);
-                    }
-                }
-                else
-                {
-                    var jsonObjectNested = new Dictionary<string, object?>();
-                    jsonObjectNested[field.JSONField] = value;
+                        var jsonObjectNested = new Dictionary<string, object?>();
+                        jsonObjectNested[field.JSONField] = value;
 
-                    pkToJsonMapping[new Dictionary<string, string> { { correctRelation.PrimaryKey.CSVFileName, primaryKeyValue } }] = jsonObjectNested;
+                        pkToJsonMapping[new Dictionary<string, string> { { correctRelation.PrimaryKey.CSVFileName, primaryKeyValue } }] = jsonObjectNested;
+                    }
                 }
             }
         }
@@ -342,52 +344,55 @@ namespace CsvToJsonWithMapping.Services
 
             if (correctJoined == null)
             {
-                throw new Exception($"No joined data found for '{field.CSVFile}' for the PK relationship.");
+                LogPublisher.PublishLogMessage("Error: CSVData - Missing joined data", $"No joined data found for '{field.CSVFile}'. Ensure that the CSV file contains all the required columns for the join operation.");
             }
-
-            // Process the joined data
-            foreach (var fileData in correctJoined)
+            else
             {
-                // Find the value of the primary key in the joined data
-                string? primaryKeyValue = null;
-                if (fileData.TryGetValue(correctRelation.PrimaryKey.CSVField, out var pKvalue))
+
+                // Process the joined data
+                foreach (var fileData in correctJoined)
                 {
-                    primaryKeyValue = pKvalue.ToString();
-                }
-
-                if (primaryKeyValue == null)
-                {
-                    throw new Exception($"No primary key value found for '{correctRelation.PrimaryKey.CSVField}' in file '{correctRelation.PrimaryKey.CSVFileName}'.");
-                }
-
-                if (!fileData.ContainsKey(field.CSVField))
-                {
-                    throw new Exception($"No data found for ' {field.CSVField} ' in joined record.");
-                }
-
-                // Check if a JSON object already exists for this primary key
-                var existingKey = pkToJsonMapping.Keys.FirstOrDefault(pkDict => pkDict.ContainsKey(correctRelation.PrimaryKey.CSVFileName) && pkDict.ContainsValue(primaryKeyValue));
-                var value = _fieldValidationService.ProcessFieldValidation(fileData[field.CSVField].ToString(), field);
-
-                if (existingKey != null)
-                {
-                    var existingJson = pkToJsonMapping[existingKey];
-
-                    if (existingJson.ContainsKey(field.JSONField))
+                    // Find the value of the primary key in the joined data
+                    string? primaryKeyValue = null;
+                    if (fileData.TryGetValue(correctRelation.PrimaryKey.CSVField, out var pKvalue))
                     {
-                        existingJson[field.JSONField] = existingJson[field.JSONField] + " " + value;
+                        primaryKeyValue = pKvalue.ToString();
+                    }
+
+                    if (primaryKeyValue == null)
+                    {
+                        throw new Exception($"No primary key value found for '{correctRelation.PrimaryKey.CSVField}' in file '{correctRelation.PrimaryKey.CSVFileName}'.");
+                    }
+
+                    if (!fileData.ContainsKey(field.CSVField))
+                    {
+                        throw new Exception($"No data found for ' {field.CSVField} ' in joined record.");
+                    }
+
+                    // Check if a JSON object already exists for this primary key
+                    var existingKey = pkToJsonMapping.Keys.FirstOrDefault(pkDict => pkDict.ContainsKey(correctRelation.PrimaryKey.CSVFileName) && pkDict.ContainsValue(primaryKeyValue));
+                    var value = _fieldValidationService.ProcessFieldValidation(fileData[field.CSVField].ToString(), field);
+
+                    if (existingKey != null)
+                    {
+                        var existingJson = pkToJsonMapping[existingKey];
+
+                        if (existingJson.ContainsKey(field.JSONField))
+                        {
+                            existingJson[field.JSONField] = existingJson[field.JSONField] + " " + value;
+                        }
+                        else
+                        {
+                            existingJson.Add(field.JSONField, value);
+                        }
                     }
                     else
                     {
-                        existingJson.Add(field.JSONField, value);
-                    }
-                }
-                else
-                {
-                    var jsonObjectNested = new Dictionary<string, object?>();
-                    jsonObjectNested[field.JSONField] = value;
+                        var jsonObjectNested = new Dictionary<string, object?>();
+                        jsonObjectNested[field.JSONField] = value;
 
-                    pkToJsonMapping[new Dictionary<string, string> { { correctRelation.PrimaryKey.CSVFileName, primaryKeyValue } }] = jsonObjectNested;
+                        pkToJsonMapping[new Dictionary<string, string> { { correctRelation.PrimaryKey.CSVFileName, primaryKeyValue } }] = jsonObjectNested;
+                    }
                 }
             }
         }
@@ -432,7 +437,7 @@ namespace CsvToJsonWithMapping.Services
                 }
                 else
                 {
-                    throw new Exception($"CSV field '{field.CSVField}' not found in {field.CSVFile}.");
+                    LogPublisher.PublishLogMessage("Error: CSVData - Missing column", $"CSV column '{field.CSVField}' not found in '{field.CSVFile}'.");
                 }
             }
         }
