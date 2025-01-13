@@ -40,8 +40,6 @@ namespace CsvToJsonWithMapping.Services
                     .Select(y => y.Key)
                     .ToList();
 
-
-
                 if (duplicateRelations.Any())
                 {
                     throw new Exception($"Duplicate relations found in relations file.\n{JsonSerializer.Serialize(duplicateRelations, new JsonSerializerOptions { WriteIndented = true })}");
@@ -136,7 +134,6 @@ namespace CsvToJsonWithMapping.Services
             return csvFiles;
         }
 
-
         private HashSet<string> GetUniqueCsvFilesForNestedMapping(NestedMapping nestedMapping)
         {
             var csvFiles = new HashSet<string>();
@@ -160,7 +157,6 @@ namespace CsvToJsonWithMapping.Services
 
             return csvFiles;
         }
-
 
         internal void CheckFileExists(string filePath, string fileType)
         {
