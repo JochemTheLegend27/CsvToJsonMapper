@@ -1,4 +1,4 @@
-﻿# CSV to JSON with Mapping Documentation
+﻿# CSV to JSON with Mapping
 
 ## Capabilities
 - **Dynamic CSV Mapping**: Converts flat CSV data into JSON, adhering to customizable mapping rules.
@@ -22,10 +22,6 @@
 - **Data Processing Pipeline**: Orchestrates the entire flow, starting from reading CSVs, joining related data, and validating fields, to ultimately generating the desired JSON output.
 - **Intermediate Results**: Maintains enriched and validated data in memory for downstream processes.
 - **Output**: Produces validated, nested JSON files.
-
----
-
-Here’s the updated **Usage Instructions** based on the changes you've made to your code:
 
 ---
 
