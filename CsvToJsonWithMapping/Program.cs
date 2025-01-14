@@ -34,10 +34,8 @@ class Program
 
             var groupedLogs = GroupLogs(logs);
 
-            foreach (var logType in groupedLogs)
-            {
-                WriteLogsToFile(logsOutputPath, groupedLogs[logType.Key]);
-            }
+            WriteLogsToFile(logsOutputPath, groupedLogs);
+
         }
         catch (Exception ex)
         {
@@ -50,27 +48,20 @@ class Program
         Console.WriteLine($"{logService.GetProgress()}% completed");
     }
 
-    private static Dictionary<string, Dictionary<string, Dictionary<string, int>>> GroupLogs(Dictionary<string, List<string>> logs)
+    private static Dictionary<string, Dictionary<string, int>> GroupLogs(Dictionary<string, List<string>> logs)
     {
-        var groupedLogs = new Dictionary<string, Dictionary<string, Dictionary<string, int>>>
-        {
-            { "Warning", new Dictionary<string, Dictionary<string, int>>() },
-            { "Error", new Dictionary<string, Dictionary<string, int>>() },
-            { "Information", new Dictionary<string, Dictionary<string, int>>() }
-        };
+        var groupedLogs = new Dictionary<string, Dictionary<string, int>>();
 
-        foreach (var log in logs)
+        foreach (var logCategory in new[] { "Warning", "Error", "Information" })
         {
-            string logType = log.Key;
-            if (groupedLogs.ContainsKey(logType))
-            {
-                groupedLogs[logType][log.Key] = log.Value
-                    .GroupBy(message => message)
-                    .ToDictionary(
-                        group => group.Key,
-                        group => group.Count()
-                    );
-            }
+            groupedLogs[logCategory] = logs
+                .Where(log => log.Key.Contains(logCategory))
+                .SelectMany(log => log.Value)
+                .GroupBy(message => message)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group.Count()
+                );
         }
 
         return groupedLogs;
