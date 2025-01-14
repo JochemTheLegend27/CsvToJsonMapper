@@ -1,16 +1,10 @@
 using CsvHelper;
-using Microsoft.Extensions.Logging;
 using System.Globalization;
 
 namespace CsvToJsonWithMapping.Services
 {
     public class CsvFileReaderService
     {
-        /// <summary>
-        /// Streams CSV files and returns their data incrementally.
-        /// </summary>
-        /// <param name="csvFilePaths">Paths of the CSV files to read.</param>
-        /// <returns>An enumerable for each file's data, allowing for streaming.</returns>
         public Dictionary<string, IEnumerable<IDictionary<string, string?>>> StreamCsvFiles(IEnumerable<string> csvFilePaths)
         {
             var csvData = new Dictionary<string, IEnumerable<IDictionary<string, string?>>>();

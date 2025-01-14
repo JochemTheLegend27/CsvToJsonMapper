@@ -1,12 +1,11 @@
-﻿using CsvToJsonWithMapping.E2ETests.Helpers;
+﻿using CsvToJsonWithMapping.AlgorithmTests.Helpers;
 using CsvToJsonWithMapping.Services;
-using Microsoft.Extensions.Logging;
 using Moq;
 using System.Text.Json;
 
-namespace CsvToJsonWithMapping.E2ETests
+namespace CsvToJsonWithMapping.AlgorithmTests
 {
-    public class EndToEndParameterizedTests
+    public class ParameterizedTests
     {
         [Theory]
         [MemberData(nameof(GetTestScenarios))]
@@ -14,12 +13,9 @@ namespace CsvToJsonWithMapping.E2ETests
         {
             var mockFieldValidationService = new Mock<FieldValidationService>();
 
-            // Instantiate your services with the required dependencies
             var csvDataJoinerService = new CsvDataJoinerService();
             var jsonGeneratorService = new JsonGeneratorService(mockFieldValidationService.Object);
 
-
-            // Load JSON dynamically
             var relations = TestScenarioHelper.LoadRelations(relationsPath);
             var mapping = TestScenarioHelper.LoadMapping(mappingPath);
             var csvData = TestScenarioHelper.LoadCsvData(csvDataPath);
@@ -33,7 +29,6 @@ namespace CsvToJsonWithMapping.E2ETests
             Assert.NotNull(finalResult);
             Assert.NotEmpty(finalResult);
 
-            // Compare the actual result with expected
             Assert.True(JsonEquals(finalResult, expectedOutput), $"Actual output did not match the expected output. \nActual: {JsonSerializer.Serialize(finalResult)} \nExpected: {JsonSerializer.Serialize(expectedOutput)}");
         }
 

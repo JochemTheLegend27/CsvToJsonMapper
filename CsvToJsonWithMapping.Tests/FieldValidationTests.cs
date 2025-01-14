@@ -1,6 +1,5 @@
 ﻿using CsvToJsonWithMapping.Models;
 using CsvToJsonWithMapping.Services;
-using Xunit;
 
 namespace CsvToJsonWithMapping.Tests
 {

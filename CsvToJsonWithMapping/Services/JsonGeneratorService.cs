@@ -1,6 +1,5 @@
 using CsvToJsonWithMapping.Models;
 using CsvToJsonWithMapping.Enums;
-using CsvToJsonWithMapping.Services;
 
 namespace CsvToJsonWithMapping.Services
 {
@@ -39,7 +38,6 @@ namespace CsvToJsonWithMapping.Services
             return resultJson;
         }
 
-
         private void ProcessFieldMappings(
             List<FieldMapping> fields,
             Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData,
@@ -68,7 +66,6 @@ namespace CsvToJsonWithMapping.Services
                     throw new Exception($"CSV file '{field.CSVFile}' is missing from the supplied data.");
                 }
 
-                // Find the record at the specified count
                 var currentCsvData = csvData[field.CSVFile];
                 var record = currentCsvData.Skip(count).FirstOrDefault();
 
@@ -82,12 +79,10 @@ namespace CsvToJsonWithMapping.Services
                     throw new Exception($"Field '{field.CSVField}' not found in record at index {count} in file '{field.CSVFile}'.");
                 }
 
-                // Process the field validation
                 var validatedValue = _fieldValidationService.ProcessFieldValidation(value, field);
                 jsonObject[field.JSONField] = validatedValue;
             }
         }
-
 
         private void ProcessNestedFieldMappings(List<NestedMapping> nestedMappings, List<Relation> relations, Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData, Dictionary<string, IEnumerable<IDictionary<string, object>>> joinedData, int count, Dictionary<string, object?> jsonObject)
         {
@@ -109,7 +104,6 @@ namespace CsvToJsonWithMapping.Services
             }
         }
 
-        // Method to process Object type fields
         private void ProcessObjectTypeFields(
             NestedMapping nestedField,
             Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData,
@@ -149,7 +143,6 @@ namespace CsvToJsonWithMapping.Services
                         throw new Exception($"Field '{field.CSVField}' not found in record at index {count} in file '{field.CSVFile}'.");
                     }
 
-                    // Validate and add the value
                     var validatedValue = _fieldValidationService.ProcessFieldValidation(value, field);
                     jsonObjectNested[field.JSONField] = validatedValue;
                 }
@@ -161,16 +154,14 @@ namespace CsvToJsonWithMapping.Services
             jsonObject[nestedField.JSONNestedFieldName] = jsonObjectNested;
         }
 
-
-        // Method to process Array type fields
         private void ProcessArrayTypeFields(NestedMapping nestedField, List<Relation> relations, Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData, Dictionary<string, IEnumerable<IDictionary<string, object>>> joinedData, Dictionary<string, object?> jsonObject)
         {
-            // pkToJsonMapping is a Dictionary where:
-            // - The key of the first Dictionary is a Dictionary<string, string>,
-            //   where the key represents a filename of the PK (Primary Key)
-            //   and the value contains the value of that PK.
-            // - The value of the first Dictionary is another Dictionary<string, object>,
-            //   containing the corresponding created JSON object.
+            /* pkToJsonMapping is a Dictionary where:
+                - The key of the first Dictionary is a Dictionary<string, string>,
+                where the key represents a filename of the PK (Primary Key)
+                and the value contains the value of that PK.
+                - The value of the first Dictionary is another Dictionary<string, object>,
+                containing the corresponding created JSON object. */
             var pkToJsonMapping = new Dictionary<Dictionary<string, string>, Dictionary<string, object>>();
             var jsonFieldsWithoutCsv = new List<FieldMapping>();
 
@@ -197,7 +188,6 @@ namespace CsvToJsonWithMapping.Services
             jsonObject[nestedField.JSONNestedFieldName] = pkToJsonMapping.Values.ToList();
         }
 
-        // Method to process a field with relations
         private void ProcessFieldWithRelations(FieldMapping field, List<Relation> relations, Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData, Dictionary<string, IEnumerable<IDictionary<string, object>>> joinedData, Dictionary<Dictionary<string, string>, Dictionary<string, object>> pkToJsonMapping)
         {
             var fileFkRelations = relations.FindAll(x => x.ForeignKey.CSVFileName == field.CSVFile).ToList();
@@ -217,18 +207,15 @@ namespace CsvToJsonWithMapping.Services
             }
         }
 
-        // Method to process a field with foreign key relations
         private void ProcessFkRelations(FieldMapping field, List<Relation> fileFkRelations, Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData, Dictionary<string, IEnumerable<IDictionary<string, object>>> joinedData, Dictionary<Dictionary<string, string>, Dictionary<string, object?>> pkToJsonMapping)
         {
             Relation? correctRelation = null;
             IEnumerable<IDictionary<string, object>>? correctJoined = null;
 
-            // Find the right relationship and joined data
             foreach (var fileRelation in fileFkRelations)
             {
                 var joinesForThisFile = joinedData.Where(x => x.Key == fileRelation.PrimaryKey.CSVFileName).ToList();
 
-                // Multiple joins: find the correct one based on the presence of the file in the join
                 foreach (var joinForThisFile in joinesForThisFile)
                 {
                     var isCorrectJoin = joinForThisFile.Value.Any(x => x.ContainsKey(field.CSVFile));
@@ -251,7 +238,6 @@ namespace CsvToJsonWithMapping.Services
             }
             else
             {
-                // Process the joined data
                 foreach (var record in correctJoined)
                 {
                     var primaryKeyValue = record[correctRelation.PrimaryKey.CSVField]?.ToString();
@@ -285,8 +271,6 @@ namespace CsvToJsonWithMapping.Services
                         continue;
                     }
 
-
-                    // Check if a JSON object already exists for this key
                     var existingKey = pkToJsonMapping.Keys.FirstOrDefault(pkDict => pkDict.ContainsValue(primaryKeyValue) && pkDict.ContainsKey(correctRelation.PrimaryKey.CSVFileName));
                     var value = _fieldValidationService.ProcessFieldValidation(fileData[field.CSVField], field);
 
@@ -314,16 +298,13 @@ namespace CsvToJsonWithMapping.Services
             }
         }
 
-        // Method to process a field with primary key relations
         private void ProcessPkRelations(FieldMapping field, List<Relation> filePkRelations, Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData, Dictionary<string, IEnumerable<IDictionary<string, object>>> joinedData, Dictionary<Dictionary<string, string>, Dictionary<string, object?>> pkToJsonMapping)
         {
             Relation? correctRelation = null;
             IEnumerable<IDictionary<string, object>>? correctJoined = null;
 
-            // Find the right relationship and joined data
             foreach (var fileRelation in filePkRelations)
             {
-                // Find the correct joined data based on the Foreign Key
                 var joinesForThisFile = joinedData.Where(x => x.Key == fileRelation.PrimaryKey.CSVFileName).ToList();
 
                 foreach (var joinForThisFile in joinesForThisFile)
@@ -348,11 +329,8 @@ namespace CsvToJsonWithMapping.Services
             }
             else
             {
-
-                // Process the joined data
                 foreach (var fileData in correctJoined)
                 {
-                    // Find the value of the primary key in the joined data
                     string? primaryKeyValue = null;
                     if (fileData.TryGetValue(correctRelation.PrimaryKey.CSVField, out var pKvalue))
                     {
@@ -369,7 +347,6 @@ namespace CsvToJsonWithMapping.Services
                         throw new Exception($"No data found for ' {field.CSVField} ' in joined record.");
                     }
 
-                    // Check if a JSON object already exists for this primary key
                     var existingKey = pkToJsonMapping.Keys.FirstOrDefault(pkDict => pkDict.ContainsKey(correctRelation.PrimaryKey.CSVFileName) && pkDict.ContainsValue(primaryKeyValue));
                     var value = _fieldValidationService.ProcessFieldValidation(fileData[field.CSVField].ToString(), field);
 
@@ -397,7 +374,6 @@ namespace CsvToJsonWithMapping.Services
             }
         }
 
-        // Method to process a field without relations
         private void ProcessFieldWithoutRelations(FieldMapping field, Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData, Dictionary<Dictionary<string, string>, Dictionary<string, object?>> pkToJsonMapping)
         {
 
@@ -442,7 +418,6 @@ namespace CsvToJsonWithMapping.Services
             }
         }
 
-        // Method to add empty nested fields
         private void AddEmptyNestedFields(NestedMapping nestedField, Dictionary<string, object?> jsonObjectNested)
         {
             if (nestedField.NestedFields.Count > 0)
@@ -457,7 +432,6 @@ namespace CsvToJsonWithMapping.Services
             }
         }
 
-        // Overload for pkToJsonMapping
         private void AddEmptyNestedFields(NestedMapping nestedField, Dictionary<Dictionary<string, string>, Dictionary<string, object>> pkToJsonMapping)
         {
             if (nestedField.NestedFields.Count > 0)
@@ -473,7 +447,6 @@ namespace CsvToJsonWithMapping.Services
             }
         }
 
-        // Method to add fields without CSV
         private void AddFieldsWithoutCsv(List<FieldMapping> jsonFieldsWithoutCsv, Dictionary<Dictionary<string, string>, Dictionary<string, object>> pkToJsonMapping)
         {
             foreach (var fieldWithoutCsv in jsonFieldsWithoutCsv)

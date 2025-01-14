@@ -1,7 +1,7 @@
 ﻿using CsvToJsonWithMapping.Models;
 using System.Text.Json;
 
-namespace CsvToJsonWithMapping.E2ETests.Helpers
+namespace CsvToJsonWithMapping.AlgorithmTests.Helpers
 {
     public static class TestScenarioHelper
     {
@@ -28,7 +28,6 @@ namespace CsvToJsonWithMapping.E2ETests.Helpers
 
         public static IEnumerable<object[]> GetAllTestScenarios()
         {
-            // Find all subdirectories under TestScenarios/
             var scenarioRoot = "TestScenarios/";
             var directories = Directory.GetDirectories(scenarioRoot);
 
@@ -39,7 +38,6 @@ namespace CsvToJsonWithMapping.E2ETests.Helpers
                 var csvDataPath = Path.Combine(dir, "csv_data.json");
                 var expectedOutputPath = Path.Combine(dir, "expected_output.json");
 
-                // Only proceed if all the expected files exist
                 if (File.Exists(relationsPath) &&
                     File.Exists(mappingPath) &&
                     File.Exists(csvDataPath) &&
@@ -56,5 +54,4 @@ namespace CsvToJsonWithMapping.E2ETests.Helpers
             }
         }
     }
-
 }

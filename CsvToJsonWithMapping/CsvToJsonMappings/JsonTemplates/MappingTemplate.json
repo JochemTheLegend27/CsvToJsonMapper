@@ -1,0 +1,47 @@
+{
+  "Fields": [
+    {
+      "CSVField": "",
+      "CSVFile": "",
+      "JSONField": "",
+      "Validations": {
+        "Required": true,
+        "Type": "",
+        "Min": null,
+        "Max": null,
+        "ValidationsNeedToPass": false
+      },
+      "ConversionRules": {
+        "csvExampleValue": "JsonExampleValue"
+      }
+    }
+  ],
+  "NestedFields": [
+    {
+      "JSONNestedType": "Array",
+      "JSONNestedFieldName": "",
+      "Fields": [
+        {
+          "CSVField": "",
+          "CSVFile": "",
+          "JSONField": "",
+          "Validations": {
+            "Required": true,
+            "Type": "",
+            "Min": null,
+            "Max": null,
+            "ValidationsNeedToPass": false
+          },
+          "ConversionRules": { }
+        }
+      ],
+      "NestedFields": [
+        {
+          "JSONNestedType": "Object",
+          "JSONNestedFieldName": "",
+          "Fields": []
+        }
+      ]
+    }
+  ]
+}

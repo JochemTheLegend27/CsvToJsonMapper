@@ -1,7 +1,5 @@
 using CsvToJsonWithMapping.Models;
 using CsvToJsonWithMapping.Services;
-using Microsoft.Extensions.Logging;
-using Moq;
 
 namespace CsvToJsonWithMapping.Tests
 {
@@ -96,8 +94,8 @@ namespace CsvToJsonWithMapping.Tests
 
             var csvData = new Dictionary<string, IEnumerable<IDictionary<string, string?>>>
             {
-                { "primary.csv", new List<Dictionary<string, string?>>() }, // Empty primary CSV
-                { "foreign.csv", new List<Dictionary<string, string?>>() }  // Empty foreign CSV
+                { "primary.csv", new List<Dictionary<string, string?>>() },
+                { "foreign.csv", new List<Dictionary<string, string?>>() }
             };
 
             // Act
@@ -408,13 +406,11 @@ namespace CsvToJsonWithMapping.Tests
             var csvDataJoinerService = new CsvDataJoinerService();
             var relations = new List<Relation>
             {
-                // FK1 points to PK1
                 new Relation
                 {
                     PrimaryKey = new Field { CSVFileName = "customers.csv", CSVField = "CustomerId" },
                     ForeignKey = new Field { CSVFileName = "orders.csv", CSVField = "FKCustomerId" }
                 },
-                // PK1 itself has an FK pointing to another table
                 new Relation
                 {
                     PrimaryKey = new Field { CSVFileName = "orders.csv", CSVField = "OrderId" },

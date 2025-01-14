@@ -15,7 +15,6 @@ namespace CsvToJsonWithMapping.Services
                 value = convertedValue?.ToString();
             }
 
-
             object? result = value ?? field.Validations.DefaultValue;
 
             ValidateRequiredField(result, field);
@@ -100,7 +99,6 @@ namespace CsvToJsonWithMapping.Services
 
         private void HandleValidationError(string message, bool validationsNeedToPass, string validationType)
         {
-            // Provide more detailed logging with categories and explanations
             if (validationsNeedToPass)
             {
                 LogPublisher.PublishLogMessage($"Error: {validationType}", message);

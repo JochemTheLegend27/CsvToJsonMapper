@@ -11,5 +11,4 @@ namespace CsvToJsonWithMapping.Models
         public Validations Validations { get; set; } = new();
         public Dictionary<string, object>? ConversionRules { get; set; }
     }
-
 }

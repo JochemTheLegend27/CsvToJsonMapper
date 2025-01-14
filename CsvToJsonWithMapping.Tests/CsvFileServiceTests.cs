@@ -1,6 +1,5 @@
 using CsvToJsonWithMapping.Services;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Moq;
 
 namespace CsvToJsonWithMapping.Tests
@@ -48,12 +47,10 @@ namespace CsvToJsonWithMapping.Tests
             // Assert
             Assert.NotNull(result);
             Assert.True(result.ContainsKey("sample.csv"));
-            var sampleData = result["sample.csv"].ToList(); // Convert to List to access by index
+            var sampleData = result["sample.csv"].ToList();
 
             Assert.Equal(2, sampleData.Count);
             Assert.Equal("Value1", sampleData[0]["Header1"]);
         }
-
-
     }
 }

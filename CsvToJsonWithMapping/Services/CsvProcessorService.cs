@@ -1,6 +1,4 @@
 ﻿using CsvToJsonWithMapping.Models;
-using CsvToJsonWithMapping.Services;
-using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
 namespace CsvToJsonWithMapping.Services
@@ -116,7 +114,6 @@ namespace CsvToJsonWithMapping.Services
                     }
                 }
             }
-
 
             foreach (var relation in relations)
             {

@@ -8,17 +8,5 @@
       "CSVField": "",
       "CSVFileName": ""
     }
-  },
-  {
-    "PrimaryKey": {
-      "CSVField": "",
-      "CSVFileName": ""
-    },
-    "ForeignKey": {
-      "CSVField": "",
-      "CSVFileName": ""
-    }
   }
-
-
 ]
