@@ -2,16 +2,20 @@
 
 ## Capabilities
 - **Dynamic CSV Mapping**: Converts flat CSV data into JSON, adhering to customizable mapping rules.
-- **Data Validation**: Ensures fields meet specified criteria, enhancing data integrity.
+- **Data Validation**: Ensures fields meet specified criteria.
 - **Relational Joins**: Supports merging data across multiple CSVs, mimicking relational database functionality with primary and foreign key relationships.
 - **Error Logging and Debugging**: Tracks progress and flags errors or warnings with a built-in logging service.
 - **Scalability and Performance**: Handles large datasets efficiently using in-memory data structures and lazy evaluations.
+
+---
 
 ## Key Advantages
 - **Flexibility**: Adapts to varying CSV schemas and mapping requirements.
 - **Comprehensive Validation**: Prevents invalid data from entering the final output.
 - **Modularity**: Built as a collection of independent services for better maintainability and extensibility.
 - **High Performance**: Optimized to minimize memory usage and enhance processing speed for large-scale datasets.
+
+---
 
 ## How Does It Work?
 - **Input Data**: Takes raw CSV files, mapping configurations, and relationship definitions as input.
@@ -21,20 +25,46 @@
 
 ---
 
+Here’s the updated **Usage Instructions** based on the changes you've made to your code:
+
+---
+
 ## Usage Instructions
+
 ### Prerequisites
-- .NET 8.0 or later
-- Input CSV files, mapping file, and relations file.
+- .NET 8.0 or later  
+- Input CSV files, a mapping file, and a relations file.
 
 ### Steps
-1. Place all CSV files in a directory.
-2. Provide the mapping file and relations file.
-3. Run the `CSVProcessorService` with the appropriate paths for the input files and output JSON.
 
-Example:
-```csharp
-var processor = new CsvProcessorService(loggingService, fileReaderService, joinerService, generatorService, writerService);
-await processor.ProcessCsvFilesAsync("path/to/csv", "path/to/mappings.json", "path/to/relations.json", "path/to/output.json");
+1. **File Placement**  
+   Place the required files in the following directories relative to the application's base directory:  
+   - **CSV Files**: Place all input CSV files in the `CsvFiles` directory.  
+   - **Mapping File**: Place `mapping.json` in the `CsvToJsonMappings` directory.  
+   - **Relations File**: Place `relations.json` in the `CsvToJsonMappings` directory.  
+
+2. **Output Location**  
+   The processed **JSON output** will be generated in the root directory as `finalOutput.json`.  
+   Additionally, **logs** (including warnings, errors, and information) will be saved in a CSV file named `logs.csv` in the root directory.
+
+3. **Run the Application**  
+   Execute the application. It will:
+   - Automatically process the files placed in the specified directories.
+   - Display progress updates in the console.
+   - Write the output JSON and logs to the files as described above.
+
+### Directory Structure:
+```
+project/
+├── CsvFiles/
+│   └── example1.csv
+│   └── example2.csv
+├── CsvToJsonMappings/
+│   └── mapping.json
+│   └── relations.json
+├── finalOutput.json
+├── logs.csv
+└── Program.cs
 ```
 
 ---
@@ -95,7 +125,7 @@ The `CSVProcessorService` serves as the entry point for the flow:
 6. Writes the output to a JSON file using `JsonWriterService`.
 
 ### 2. **CsvDataJoinerService**
-The `CsvDataJoinerService` is a crucial component that links related data from multiple CSV files using relationships defined in the configuration. This ensures that records from different CSV files with matching keys are combined into enriched records, ready for JSON conversion.
+The `CsvDataJoinerService` is a component that links related data from multiple CSV files using relationships defined in the configuration. This ensures that records from different CSV files with matching keys are combined into enriched records, ready for JSON conversion.
 
 #### **Purpose**
 - **Data Enrichment**: Enhances the primary records by appending related data from other files.
@@ -148,11 +178,9 @@ The `CsvDataJoinerService` processes the input data through several steps:
   - Primary CSV File: `Orders.csv` with PK: `ID`.
   - Foreign CSV File: `OrderDetails.csv` with FK: `OrderID`.
 
-
 **Step 2: Validate CSV Files**
 - Ensure both primary and foreign CSV files exist in the provided `csvData`.
 - Log errors if any required files or fields are missing.
-
 
 **Step 3: Build Foreign Key Lookup**
 - Create a lookup dictionary from the foreign CSV file:
@@ -265,7 +293,6 @@ The `JsonGeneratorService` is a core component designed to convert CSV data into
    - Data prepared by linking related CSV records using relationships, provided as a dictionary:
      - **Key**: Primary file name in the relationship.
      - **Value**: List of enriched records.
----
 
 #### **Processing**
 **1. Initialization**
@@ -308,7 +335,6 @@ The `JsonGeneratorService` is a core component designed to convert CSV data into
 **6. Finalize JSON Output**
 - Combines all processed fields and nested structures into a final JSON object.
 - Adds this object to the result list, ensuring the generated JSON conforms to the specified mapping.
-
 
 #### **Key Cases**
 1. **Fields**
@@ -361,8 +387,6 @@ The `JsonGeneratorService` is a core component designed to convert CSV data into
 
 **6. `ProgressField`**
 - Tracks progress for logging purposes.
-
-
 
 #### **Examples**
 **Mapping Input**
@@ -421,7 +445,6 @@ The `JsonGeneratorService` is a core component designed to convert CSV data into
 ### 4. **FieldValidationService**
 The `FieldValidationService` ensures data integrity and correctness by validating and transforming fields according to the rules specified in the mapping configuration.
 
-
 #### **Validation Rules**
 The service applies a series of validation rules to each field:
 
@@ -443,8 +466,6 @@ The service applies a series of validation rules to each field:
 
 5. **Error Handling**:
    - Logs validation errors or warnings depending on whether `ValidationsNeedToPass` is true.
-
----
 
 #### **Input**
 - **Field Value**:
@@ -471,10 +492,8 @@ The service applies a series of validation rules to each field:
     }
     ```
 
----
-
 #### **Processing**
-The service processes each field in detailed steps:
+The service processes each field in steps:
 
 1. **Normalize Input**:
    - Trim whitespace
@@ -505,19 +524,11 @@ The service processes each field in detailed steps:
 
 6. **Handle Validation Errors**:
    - Log errors or warnings with descriptive messages.
-   - Example:
-     ```text
-     Error: Orders.csv - OrderID: Value exceeds maximum allowed (10000 > 9999).
-     ```
-
----
 
 #### **Output**
 - Returns the validated and transformed value.
 - If validation fails:
   - Logs the error or warning.
-
----
 
 #### **Detailed Examples**
 1. **String Validation**:
@@ -528,7 +539,7 @@ The service processes each field in detailed steps:
    - Input: `"John"`
    - Output: `"John"` (Valid)
    - Input: `"J"`
-   - Output: Error: `"Customer" must have at least 3 characters.`
+   - Output - Error: because `Customer` must have at least 3 characters.
 
 2. **Numeric Validation**:
    - Mapping:
@@ -538,7 +549,7 @@ The service processes each field in detailed steps:
    - Input: `"1234"`
    - Output: `1234` (Valid)
    - Input: `"10000"`
-   - Output: Error: `"OrderID" exceeds maximum value of 9999.`
+   - Output - Error: because `OrderID` exceeds maximum value of 9999.
 
 3. **Boolean Conversion**:
    - Mapping:
@@ -548,14 +559,14 @@ The service processes each field in detailed steps:
    - Input: `"yes"`
    - Output: `true`
    - Input: `"maybe"`
-   - Output: Error: `"IsActive" must be a boolean value.`
-
----
+   - Output - Error: because `IsActive` must be a boolean value.
 
 #### **Why It Is Necessary**
 - **Data Integrity**: Ensures the data adheres to specified requirements, preventing invalid or corrupted data in the output.
 - **Schema Compliance**: Matches the target JSON schema expectations for types and constraints.
-- **Error Handling**: Provides clear feedback on issues, making debugging and corrections easier.
+- **Error Handling**: Provides feedback on issues, making debugging and corrections easier.
+
+---
 
 ### 5. **LoggingService**
 Tracks progress and logs events during the process:
@@ -588,7 +599,7 @@ Tracks progress and logs events during the process:
      ```
 
    - **Why `Dictionary<string, IEnumerable<IDictionary<string, string?>>`?**
-     - **Flexibility**: Supports an arbitrary number of files, each with variable column names and types.
+     - **Flexibility**: Supports a flexible number of files, each with variable column names and types.
      - **Generic Record Representation**: Allows working with data without pre-defining a rigid schema.
      - **Lazy Processing**: The `IEnumerable` enables efficient iteration, reducing memory overhead when working with large datasets.
 
@@ -622,7 +633,7 @@ Tracks progress and logs events during the process:
      ```
 
    - **Why Similar Structure?**
-     - **Consistency**: Aligns with the raw CSV data structure for seamless processing.
+     - **Consistency**: Aligns with the raw CSV data structure for smooth processing.
      - **Enhanced Capability**: Supports storing both primitive values and complex nested collections (`object?`).
 
 ### **Intermediate Results**
@@ -659,7 +670,7 @@ Tracks progress and logs events during the process:
 ---
 
 ## Design Decisions
-### 1. **Use of Dictionaries and Enumerables**
+### **Use of Dictionaries and Enumerables**
 - **Why Use `IDictionary`?**
   - **Dynamic Field Names**: Allows for unknown or dynamic CSV schemas where column names vary between files.
   - **Efficient Lookups**: Enables quick access to field values using column names as keys.
@@ -671,20 +682,5 @@ Tracks progress and logs events during the process:
 - **Alternatives**:
   - **Custom Data Models**: While providing strong typing, they require predefining schemas, which limits flexibility.
   - **Lists Only**: Lacks the key-based access provided by `IDictionary`, making operations on fields cumbersome.
-
-### 2. **Generic Record Representation**
-- **Why**:
-  - Ensures flexibility and generality when working with unknown or varying data schemas.
-  - Simplifies handling of optional fields, nested structures, and differing column counts between files.
-
-### 3. **Event-Driven Logging**
-- **Why Use a Dictionary for Logs?**
-  - **Categorization**: Organizes logs by type (e.g., errors, warnings).
-  - **Scalability**: Allows easy filtering and grouping for reporting or debugging.
-
-### 4. **Consistency Between Raw and Enriched Data**
-- **Why Keep the Structure Consistent?**
-  - Facilitates smooth transition from raw CSV data to enriched records.
-  - Enables reuse of methods for both data types without additional transformations.
 
 ---

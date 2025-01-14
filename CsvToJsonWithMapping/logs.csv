@@ -1,0 +1,5 @@
+LogType,LogMessage,OccurrenceCount
+"Information","Processing relation: farms.csv (Id) -> farmDetails.csv (FarmId)",1
+"Information","Processing 4 records from farms.csv",3
+"Information","Processing relation: farms.csv (Id) -> products.csv (FarmId)",1
+"Information","Processing relation: farms.csv (Id) -> employees.csv (FarmId)",1
