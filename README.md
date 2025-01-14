@@ -1,7 +1,46 @@
 ﻿# CSV to JSON with Mapping Documentation
 
-## Overview
-This project processes CSV files, maps them to a JSON structure based on predefined mappings, and validates the data using custom rules. The main services used in this project include:
+## Capabilities
+- **Dynamic CSV Mapping**: Converts flat CSV data into JSON, adhering to customizable mapping rules.
+- **Data Validation**: Ensures fields meet specified criteria, enhancing data integrity.
+- **Relational Joins**: Supports merging data across multiple CSVs, mimicking relational database functionality with primary and foreign key relationships.
+- **Error Logging and Debugging**: Tracks progress and flags errors or warnings with a built-in logging service.
+- **Scalability and Performance**: Handles large datasets efficiently using in-memory data structures and lazy evaluations.
+
+## Key Advantages
+- **Flexibility**: Adapts to varying CSV schemas and mapping requirements.
+- **Comprehensive Validation**: Prevents invalid data from entering the final output.
+- **Modularity**: Built as a collection of independent services for better maintainability and extensibility.
+- **High Performance**: Optimized to minimize memory usage and enhance processing speed for large-scale datasets.
+
+## How Does It Work?
+- **Input Data**: Takes raw CSV files, mapping configurations, and relationship definitions as input.
+- **Data Processing Pipeline**: Orchestrates the entire flow, starting from reading CSVs, joining related data, and validating fields, to ultimately generating the desired JSON output.
+- **Intermediate Results**: Maintains enriched and validated data in memory for downstream processes.
+- **Output**: Produces validated, nested JSON files.
+
+---
+
+## Usage Instructions
+### Prerequisites
+- .NET 8.0 or later
+- Input CSV files, mapping file, and relations file.
+
+### Steps
+1. Place all CSV files in a directory.
+2. Provide the mapping file and relations file.
+3. Run the `CSVProcessorService` with the appropriate paths for the input files and output JSON.
+
+Example:
+```csharp
+var processor = new CsvProcessorService(loggingService, fileReaderService, joinerService, generatorService, writerService);
+await processor.ProcessCsvFilesAsync("path/to/csv", "path/to/mappings.json", "path/to/relations.json", "path/to/output.json");
+```
+
+---
+
+## Services Overview
+The main services used in this project include:
 
 - **CSVProcessorService**: Orchestrates the entire flow from reading CSV files to generating JSON.
 - **CsvDataJoinerService**: Joins data across multiple CSV files based on specified relations.
@@ -41,8 +80,7 @@ graph TD
         M -->|Final JSON| N
     end
 ```
-
-You can paste the code into any Mermaid-compatible renderer (e.g., [Mermaid Live Editor](https://mermaid.live/)) to visualize the diagram.
+[Mermaid Live Editor](https://mermaid.live/))
 
 ---
 
@@ -57,34 +95,38 @@ The `CSVProcessorService` serves as the entry point for the flow:
 6. Writes the output to a JSON file using `JsonWriterService`.
 
 ### 2. **CsvDataJoinerService**
-The `CsvDataJoinerService` is responsible for joining data from multiple CSV files based on relations defined in the configuration. This service plays a crucial role in creating enriched records where data from foreign CSV files is combined with corresponding primary CSV records using primary key (PK) and foreign key (FK) relationships.
+The `CsvDataJoinerService` is a crucial component that links related data from multiple CSV files using relationships defined in the configuration. This ensures that records from different CSV files with matching keys are combined into enriched records, ready for JSON conversion.
+
+#### **Purpose**
+- **Data Enrichment**: Enhances the primary records by appending related data from other files.
+- **Relational Integrity**: Mimics relational database behavior by linking primary and foreign records through primary key (PK) and foreign key (FK) relationships.
 
 #### **Input**
 1. **Relations File**:
-   - Defines how CSV files are related.
-   - Specifies the primary key (PK) and foreign key (FK) for each relation.
-   - Example:
+   - Specifies how CSV files are related using PK and FK fields.
+   - Example Relation:
      ```json
      [
        {
-         "PrimaryKey": { "CSVFileName": "Orders.csv", "CSVField": "OrderID" },
+         "PrimaryKey": { "CSVFileName": "Orders.csv", "CSVField": "ID" },
          "ForeignKey": { "CSVFileName": "OrderDetails.csv", "CSVField": "OrderID" }
        }
      ]
      ```
+   - **Explanation**: This relation links the `Orders.csv` file (primary file) with the `OrderDetails.csv` file (foreign file) using the `ID` field in `Orders.csv` and the `OrderID` field in `OrderDetails.csv`.
 
 2. **Raw CSV Data**:
-   - Loaded into memory as dictionaries, where:
-     - The key is the CSV file name.
-     - The value is a list of records (dictionaries of field-value pairs).
+   - Stored in memory as a dictionary:
+     - **Key**: CSV file name.
+     - **Value**: A list of records, where each record is a dictionary with column names as keys and values as field data.
    - Example:
      ```csharp
      Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData = new()
      {
          "Orders.csv": new List<Dictionary<string, string?>>
          {
-             new() { { "OrderID", "1" }, { "Customer", "John Doe" } },
-             new() { { "OrderID", "2" }, { "Customer", "Jane Smith" } }
+             new() { { "ID", "1" }, { "Customer", "John Doe" } },
+             new() { { "ID", "2" }, { "Customer", "Jane Smith" } }
          },
          "OrderDetails.csv": new List<Dictionary<string, string?>>
          {
@@ -95,56 +137,57 @@ The `CsvDataJoinerService` is responsible for joining data from multiple CSV fil
      };
      ```
 
+---
+
 #### **Processing**
-The service processes the data in the following detailed steps:
+The `CsvDataJoinerService` processes the input data through several steps:
 
-1. **Extract Relation Metadata**:
-   - For each relation in the relations file, retrieve the PK and FK field names and associated CSV file names.
-   - Example:
-     - Primary CSV file: `Orders.csv` with `OrderID` as PK.
-     - Foreign CSV file: `OrderDetails.csv` with `OrderID` as FK.
+**Step 1: Extract Relation Metadata**
+- Parse the relations file to understand how the CSV files are linked.
+- Example:
+  - Primary CSV File: `Orders.csv` with PK: `ID`.
+  - Foreign CSV File: `OrderDetails.csv` with FK: `OrderID`.
 
-2. **Validate CSV Files**:
-   - Ensure both the primary and foreign CSV files exist in the loaded data (`csvData`).
-   - Log errors if files or required columns are missing.
 
-3. **Build Foreign Key Lookup**:
-   - Create a lookup dictionary for the foreign CSV file, grouping records by their FK value.
-   - Example:
-     ```csharp
-     var foreignKeyLookup = new Dictionary<string, List<Dictionary<string, string?>>>
-     {
-         { "1", new List<Dictionary<string, string?>> 
-             { 
-                 new() { { "OrderID", "1" }, { "Product", "Widget" } },
-                 new() { { "OrderID", "1" }, { "Product", "Gadget" } }
-             } 
-         },
-         { "2", new List<Dictionary<string, string?>> 
-             { 
-                 new() { { "OrderID", "2" }, { "Product", "Thingamajig" } }
-             } 
-         }
-     };
-     ```
+**Step 2: Validate CSV Files**
+- Ensure both primary and foreign CSV files exist in the provided `csvData`.
+- Log errors if any required files or fields are missing.
+
+
+**Step 3: Build Foreign Key Lookup**
+- Create a lookup dictionary from the foreign CSV file:
+  - **Key**: FK value.
+  - **Value**: A list of records that share the same FK value.
+  - **Example**:
+    ```csharp
+    var foreignKeyLookup = new Dictionary<string, List<Dictionary<string, string?>>>
+    {
+        "1": new List<Dictionary<string, string?>> 
+        {
+            new() { { "OrderID", "1" }, { "Product", "Widget" } },
+            new() { { "OrderID", "1" }, { "Product", "Gadget" } }
+        },
+        "2": new List<Dictionary<string, string?>> 
+        {
+            new() { { "OrderID", "2" }, { "Product", "Thingamajig" } }
+        }
+    };
+    ```    
 
 4. **Join Data**:
-   - Iterate over records in the primary CSV file.
-   - For each record:
-     - Extract the PK value.
-     - Retrieve related records from the foreign key lookup.
-     - Enrich the primary record by:
-       - Adding its original fields.
-       - Adding a new key corresponding to the foreign CSV file, containing the related records or an empty list if no match is found.
-   - Example:
-     - Input Primary Record:
+   - Iterate over records in the primary CSV file:
+     - Extract the PK value for each record.
+     - Use the FK lookup to find related records from the foreign CSV file.
+     - Add the original primary record fields and the related foreign records to a new dictionary.
+   - **Example**:
+     - **Input Record** (from `Orders.csv`):
        ```json
-       { "OrderID": "1", "Customer": "John Doe" }
+       { "ID": "1", "Customer": "John Doe" }
        ```
-     - Joined Data:
+     - **Enriched Record**:
        ```json
        { 
-         "OrderID": "1", 
+         "ID": "1", 
          "Customer": "John Doe", 
          "OrderDetails.csv": [
            { "OrderID": "1", "Product": "Widget" },
@@ -154,11 +197,13 @@ The service processes the data in the following detailed steps:
        ```
 
 5. **Handle Missing Relations**:
-   - Log warnings for unmatched records in the primary file when no related records are found in the foreign file.
+   - For primary records with no matching foreign records:
+     - Add the primary record to the result with an empty list for the related foreign file.
+   - Log warnings about unmatched records for debugging.
 
 6. **Finalize Result**:
-   - Compile a dictionary where each key is a primary CSV file name and the value is the enriched records list.
-   - Example:
+   - Compile the enriched records into a dictionary with the primary CSV file as the key.
+   - **Example**:
      ```csharp
      Dictionary<string, IEnumerable<IDictionary<string, object?>>> result = new()
      {
@@ -166,7 +211,7 @@ The service processes the data in the following detailed steps:
          {
              new()
              {
-                 { "OrderID", "1" },
+                 { "ID", "1" },
                  { "Customer", "John Doe" },
                  { "OrderDetails.csv", new List<Dictionary<string, object?>>
                      {
@@ -177,7 +222,7 @@ The service processes the data in the following detailed steps:
              },
              new()
              {
-                 { "OrderID", "2" },
+                 { "ID", "2" },
                  { "Customer", "Jane Smith" },
                  { "OrderDetails.csv", new List<Dictionary<string, object?>>
                      {
@@ -190,202 +235,192 @@ The service processes the data in the following detailed steps:
      ```
 
 #### **Why It Is Necessary**
-- **Data Enrichment**: By joining related data, we ensure that the output JSON contains all relevant details for each primary record.
-- **Relational Integrity**: The process replicates relational database behavior, linking records through PK-FK relationships.
-
-### 3. **JsonGeneratorService**
-The `JsonGeneratorService` transforms the enriched data into a JSON structure based on the provided mappings. It leverages field validation and supports creating complex nested JSON structures.
-
-#### **Input**
-1. **Mappings**:
-   - Defines how CSV fields map to JSON fields and structures.
-   - Specifies validations and conversion rules for each field.
-   - Example:
-     ```json
-     {
-       "Fields": [
-         { 
-           "CSVField": "OrderID", 
-           "CSVFile": "Orders.csv", 
-           "JSONField": "OrderId", 
-           "Validations": { "Required": true, "Type": "int" } 
-         },
-         { 
-           "CSVField": "Customer", 
-           "CSVFile": "Orders.csv", 
-           "JSONField": "CustomerName", 
-           "Validations": { "Type": "string", "Min": 3, "Max": 50 } 
-         }
-       ],
-       "NestedFields": [
-         {
-           "JSONNestedFieldName": "OrderDetails",
-           "JSONNestedType": "Array",
-           "Fields": [
-             { 
-               "CSVField": "Product", 
-               "CSVFile": "OrderDetails.csv", 
-               "JSONField": "ProductName", 
-               "Validations": { "Type": "string", "Required": true } 
-             }
-           ]
-         }
-       ]
-     }
-     ```
-
-2. **Relations**:
-   - Specifies primary and foreign key relationships for nested data.
-   - Example:
-     ```json
-     [
-       {
-         "PrimaryKey": { "CSVFileName": "Orders.csv", "CSVField": "OrderID" },
-         "ForeignKey": { "CSVFileName": "OrderDetails.csv", "CSVField": "OrderID" }
-       }
-     ]
-     ```
-
-3. **Enriched Data**:
-   - Output from `CsvDataJoinerService`, which combines related records.
-   - Example:
-     ```json
-     {
-       "Orders.csv": [
-         { 
-           "OrderID": "1", 
-           "Customer": "John Doe", 
-           "OrderDetails.csv": [
-             { "OrderID": "1", "Product": "Widget" },
-             { "OrderID": "1", "Product": "Gadget" }
-           ] 
-         }
-       ]
-     }
-     ```
-
-#### **Processing**
-The service processes the data in detailed steps as follows:
-
-1. **Initialize JSON Structure**:
-   - Start with an empty JSON object or array based on the mapping.
-
-2. **Process Field Mappings**:
-   - Iterate over `Fields` in the mapping.
-   - For each field:
-     - Validate the field using `FieldValidationService`.
-     - Extract the value from the enriched data.
-     - Add the validated value to the JSON structure.
-   - Example:
-     - Mapping:
-       ```json
-       { "CSVField": "OrderID", "CSVFile": "Orders.csv", "JSONField": "OrderId" }
-       ```
-     - Enriched Data:
-       ```json
-       { "OrderID": "1", "Customer": "John Doe" }
-       ```
-     - JSON Output:
-       ```json
-       { "OrderId": 1 }
-       ```
-
-3. **Process Nested Field Mappings**:
-   - For each `NestedField` in the mapping:
-     - Determine the type (`Object` or `Array`).
-     - Handle nested fields recursively.
-
-4. **Handle Nested Objects**:
-   - Create a sub-object within the JSON.
-   - Map fields from the enriched data to this sub-object.
-   - Example:
-     - Nested Mapping:
-       ```json
-       {
-         "JSONNestedFieldName": "CustomerDetails",
-         "JSONNestedType": "Object",
-         "Fields": [
-           { "CSVField": "Customer", "CSVFile": "Orders.csv", "JSONField": "Name" }
-         ]
-       }
-       ```
-     - Enriched Data:
-       ```json
-       { "OrderID": "1", "Customer": "John Doe" }
-       ```
-     - JSON Output:
-       ```json
-       { "CustomerDetails": { "Name": "John Doe" } }
-       ```
-
-5. **Handle Nested Arrays**:
-   - Create an array within the JSON.
-   - Populate it with related records from the enriched data.
-   - Example:
-     - Nested Mapping:
-       ```json
-       {
-         "JSONNestedFieldName": "OrderDetails",
-         "JSONNestedType": "Array",
-         "Fields": [
-           { "CSVField": "Product", "CSVFile": "OrderDetails.csv", "JSONField": "ProductName" }
-         ]
-       }
-       ```
-     - Enriched Data:
-       ```json
-       { 
-         "OrderID": "1", 
-         "Customer": "John Doe", 
-         "OrderDetails.csv": [
-           { "OrderID": "1", "Product": "Widget" },
-           { "OrderID": "1", "Product": "Gadget" }
-         ] 
-       }
-       ```
-     - JSON Output:
-       ```json
-       {
-         "OrderDetails": [
-           { "ProductName": "Widget" },
-           { "ProductName": "Gadget" }
-         ]
-       }
-       ```
-
-6. **Validation and Error Handling**:
-   - Ensure required fields are present.
-   - Validate field types and constraints (e.g., min/max values).
-   - Log errors and warnings using `LoggingService`.
-
-7. **Compile Final JSON**:
-   - Combine all processed fields and nested structures.
-   - Example Final Output:
-     ```json
-     {
-       "OrderId": 1,
-       "CustomerName": "John Doe",
-       "OrderDetails": [
-         { "ProductName": "Widget" },
-         { "ProductName": "Gadget" }
-       ]
-     }
-     ```
-
-#### **Output**
-The output is a JSON structure adhering to the mappings, with nested objects and arrays if specified. This structure is suitable for further processing or direct consumption by applications.
+- **Data Enrichment**: Combining related data provides a comprehensive view of records, ensuring all necessary details are available in the final output.
+- **Relational Integrity**: Mimics relational database behavior, linking records using PK-FK relationships.
+- **Flexibility**: Handles dynamic relationships and supports complex nested data structures, making it suitable for varied use cases.
+- **Scalability**: Efficient lookups and processing enable handling large datasets without excessive resource use.
 
 ---
 
+### 3. **JsonGeneratorService**
+
+The `JsonGeneratorService` is a core component designed to convert CSV data into JSON objects based on flexible mappings, validations, and relations. It processes both flat and nested mappings to generate a structured JSON output.
+
+#### **Purpose**
+- **JSON Transformation**: Converts CSV data into JSON objects based on user-defined mappings.
+- **Validation Enforcement**: Applies validation rules on fields during processing.
+- **Relational Mapping**: Handles relationships between primary and foreign keys in CSV files for nested JSON structures.
+
+#### **Input**
+1. **Mapping Configuration**:
+   - Specifies how CSV fields map to JSON fields.
+   - Includes validations, default values, and nested field configurations.
+2. **CSV Data**:
+   - Raw data provided as a dictionary:
+     - **Key**: CSV file name.
+     - **Value**: List of records where each record is a dictionary of field-value pairs.
+3. **Relations**:
+   - Defines relationships between CSV files using primary and foreign keys.
+4. **Joined Data**:
+   - Data prepared by linking related CSV records using relationships, provided as a dictionary:
+     - **Key**: Primary file name in the relationship.
+     - **Value**: List of enriched records.
+---
+
+#### **Processing**
+**1. Initialization**
+- Initializes the total count of fields to process, including nested fields.
+- Creates a result structure to store the generated JSON objects.
+
+**2. Process Flat Field Mappings**
+- **Validation**: Checks if required fields (e.g., `JSONField`) are present.
+- **CSV Data Access**:
+  - Fetches the appropriate CSV file.
+  - Retrieves the record at the specified index.
+  - Applies validations on the field value.
+- **Fallback**: Uses default values for missing fields.
+
+**3. Process Nested Field Mappings**
+- Handles fields grouped under a nested JSON object or array.
+- **Object-Type Fields**:
+  - Converts nested mappings into JSON objects.
+  - Adds default values for unsupported or missing fields.
+  - Handles validation for each nested field.
+  - Stores the completed object in the parent JSON structure.
+- **Array-Type Fields**:
+  - Creates JSON arrays for relational data using primary and foreign keys.
+  - Processes fields without relations separately.
+  - Supports multiple rows in related data to build an array of objects.
+  - Ensures validation is applied to all elements within the array.
+
+**4. Handle Relationships**
+- Identifies relationships between CSV files:
+  - **Primary Key Relations**: Adds fields based on primary key lookups.
+  - **Foreign Key Relations**: Maps data between related CSV files.
+  - **No Relation**: Processes fields without dependencies.
+
+**5. Handling Missing Data**
+- Missing CSV fields or files:
+  - Logs warnings and assigns default or empty values.
+- Missing relationships:
+  - Logs errors and excludes the corresponding data from the output.
+
+**6. Finalize JSON Output**
+- Combines all processed fields and nested structures into a final JSON object.
+- Adds this object to the result list, ensuring the generated JSON conforms to the specified mapping.
+
+
+#### **Key Cases**
+1. **Fields**
+   - Mapped directly from CSV to JSON.
+   - Validated during processing, and missing fields trigger warnings or default values.
+
+2. **Nested Field Arrays**
+   - Built using joined data or direct relationships.
+   - Incorporates multiple records into an array structure.
+   - Ensures consistency by validating each array element.
+
+3. **Nested Field Objects**
+   - Constructed as a single object within the JSON output.
+   - All nested fields are validated and included.
+
+4. **Empty CSV Values**
+   - Processed through validation to apply defaults or null values.
+   - Ensures no disruption in the JSON structure.
+
+5. **Default Values**
+   - Applied when CSV data is missing or null, as specified in the mapping.
+   - Ensures output consistency and adherence to configuration.
+
+6. **Relationships**
+   - Joined data is utilized to enrich JSON records.
+   - Handles both PK and FK relations, logging errors for missing or invalid data.
+
+#### **Key Methods**
+**1. `GenerateJsonFromMappings`**
+- Main entry point for JSON generation.
+- Delegates field and nested field processing to specialized methods.
+
+**2. `ProcessFieldMappings`**
+- Processes individual field mappings:
+  - Validates field existence in CSV.
+  - Applies `FieldValidationService` for value validation.
+
+**3. `ProcessNestedFieldMappings`**
+- Processes nested field mappings:
+  - Differentiates between `Object` and `Array` types.
+  - Handles relationships and default value assignments.
+
+**4. `ProcessFieldWithRelations`**
+- Processes fields based on primary and foreign key relations:
+  - Looks up joined data for the correct relationship.
+  - Validates and maps values to JSON.
+
+**5. `AddEmptyNestedFields`**
+- Adds empty nested fields for unsupported configurations.
+
+**6. `ProgressField`**
+- Tracks progress for logging purposes.
+
+
+
+#### **Examples**
+**Mapping Input**
+```json
+{
+  "Fields": [
+    {
+      "CSVField": "Name",
+      "CSVFile": "Users.csv",
+      "JSONField": "userName",
+      "Validations": {
+        "Required": true,
+        "Type": "String",
+        "Min": 1,
+        "Max": 50
+      }
+    }
+  ],
+  "NestedFields": [
+    {
+      "JSONNestedFieldName": "Address",
+      "JSONNestedType": "Object",
+      "Fields": [
+        {
+          "CSVField": "Street",
+          "CSVFile": "Users.csv",
+          "JSONField": "street"
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Generated JSON Output**
+```json
+[
+  {
+    "userName": "John Doe",
+    "Address": {
+      "street": "123 Main St"
+    }
+  }
+]
+```
+
+
 #### **Why It Is Necessary**
-- **Mapping Flexibility**: Allows transforming tabular CSV data into complex JSON structures, making it more usable for APIs or data pipelines.
-- **Validation**: Ensures data integrity and compliance with schema requirements.
-- **Scalability**: Supports hierarchical relationships and nested data, enabling robust representation of real-world entities.
+- **Data Validation**: Ensures CSV data meets the required structure and constraints before conversion.
+- **Flexibility**: Handles complex nested mappings and validations dynamically.
+- **Scalability**: Efficiently processes large datasets and relations with minimal resource use.
+- **Error Handling**: Provides detailed logging for debugging missing fields, relations, and data.
+
+---
 
 ### 4. **FieldValidationService**
 The `FieldValidationService` ensures data integrity and correctness by validating and transforming fields according to the rules specified in the mapping configuration.
 
----
 
 #### **Validation Rules**
 The service applies a series of validation rules to each field:
@@ -653,19 +688,3 @@ Tracks progress and logs events during the process:
   - Enables reuse of methods for both data types without additional transformations.
 
 ---
-
-
-## Usage Instructions
-### Prerequisites
-- .NET 8.0 or later
-- Input CSV files, mapping file, and relations file.
-
-### Steps
-1. Place all CSV files in a directory.
-2. Provide the mapping file and relations file.
-3. Run the `CSVProcessorService` with the appropriate paths for the input files and output JSON.
-
-Example:
-```csharp
-var processor = new CsvProcessorService(loggingService, fileReaderService, joinerService, generatorService, writerService);
-await processor.ProcessCsvFilesAsync("path/to/csv", "path/to/mappings.json", "path/to/relations.json", "path/to/output.json");
