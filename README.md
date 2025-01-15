@@ -1,4 +1,5 @@
 ﻿# CSV to JSON with Mapping
+The **CSV to JSON Mapping** tool simplifies converting raw CSV files, such as database exports, into a single, well-structured JSON file. Using easy-to-create `mapping.json` & `relations.json` files, you can define how the data should be transformed and how relationships between CSV files (primary and foreign keys) should be linked. The tool also provides validations to ensure reliable and accurate results. This makes it perfect for working with large datasets or complex data structures.
 
 ## Capabilities
 - **Dynamic CSV Mapping**: Converts flat CSV data into JSON, adhering to customizable mapping rules.
@@ -51,7 +52,7 @@
 
 ### Directory Structure:
 ```
-project/
+CsvToJsonWithMapping/
 ├── CsvFiles/
 │   └── example1.csv
 │   └── example2.csv
