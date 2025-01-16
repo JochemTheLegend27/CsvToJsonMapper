@@ -27,6 +27,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestScenarios\DeepNestedMapping\csv_data.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\DeepNestedMapping\expected_output.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\DeepNestedMapping\mapping.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\DeepNestedMapping\relations.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestScenarios\DeepNestedWillBecomeArray\csv_data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -62,6 +74,18 @@
     </None>
     <None Update="TestScenarios\MultipleCsvIntoSingleField\relations.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\MultipleFKValuesToSameNestedJsonArray\csv_data.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\MultipleFKValuesToSameNestedJsonArray\expected_output.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\MultipleFKValuesToSameNestedJsonArray\mapping.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestScenarios\MultipleFKValuesToSameNestedJsonArray\relations.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestScenarios\SingleFileIntoNestedObjects\csv_data.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

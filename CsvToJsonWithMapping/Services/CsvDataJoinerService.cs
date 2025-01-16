@@ -84,7 +84,7 @@ namespace CsvToJsonWithMapping.Services
 
                         var pkValue = pkRecord[primaryKeyField];
 
-                        var existingRecord = result[primaryKeyFile].FirstOrDefault(record => record[primaryKeyField] == pkValue);
+                        var existingRecord = result[primaryKeyFile].FirstOrDefault(record => record[primaryKeyField].ToString() == pkValue);
 
                         if (existingRecord == null)
                         {

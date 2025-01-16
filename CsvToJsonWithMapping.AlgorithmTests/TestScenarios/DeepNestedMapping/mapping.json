@@ -1,0 +1,89 @@
+{
+  "Fields": [
+    {
+      "CSVField": "CustomerID",
+      "CSVFile": "Customers.csv",
+      "JSONField": "customerId"
+    },
+    {
+      "CSVField": "Name",
+      "CSVFile": "Customers.csv",
+      "JSONField": "customerName"
+    }
+  ],
+  "NestedFields": [
+    {
+      "JSONNestedFieldName": "Orders",
+      "JSONNestedType": "Array",
+      "Fields": [
+        {
+          "CSVField": "ID",
+          "CSVFile": "Orders.csv",
+          "JSONField": "orderId"
+        },
+        {
+          "CSVField": "Date",
+          "CSVFile": "Orders.csv",
+          "JSONField": "orderDate"
+        }
+      ],
+      "NestedFields": [
+        {
+          "JSONNestedFieldName": "OrderDetails",
+          "JSONNestedType": "Array",
+          "Fields": [
+            {
+              "CSVField": "ProductID",
+              "CSVFile": "OrderDetails.csv",
+              "JSONField": "productId"
+            },
+            {
+              "CSVField": "Product",
+              "CSVFile": "OrderDetails.csv",
+              "JSONField": "productName"
+            }
+          ],
+          "NestedFields": [
+            {
+              "JSONNestedFieldName": "ProductDetails",
+              "JSONNestedType": "Object",
+              "Fields": [
+                {
+                  "CSVField": "ProductID",
+                  "CSVFile": "Products.csv",
+                  "JSONField": "productId"
+                },
+                {
+                  "CSVField": "Name",
+                  "CSVFile": "Products.csv",
+                  "JSONField": "productName"
+                },
+                {
+                  "CSVField": "Price",
+                  "CSVFile": "Products.csv",
+                  "JSONField": "price"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "JSONNestedFieldName": "Connections",
+      "JSONNestedType": "Array",
+      "Fields": [
+        {
+          "CSVField": "ConnectedCustomerID",
+          "CSVFile": "Connections.csv",
+          "JSONField": "connectedCustomerId"
+        },
+        {
+          "CSVField": "ConnectionType",
+          "CSVFile": "Connections.csv",
+          "JSONField": "connectionType"
+        }
+      ]
+    }
+  ]
+}

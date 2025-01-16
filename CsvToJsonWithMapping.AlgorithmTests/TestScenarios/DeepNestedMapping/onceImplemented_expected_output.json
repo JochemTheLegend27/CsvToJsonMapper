@@ -1,0 +1,82 @@
+[
+  {
+    "customerId": 1,
+    "customerName": "Jane Smith",
+    "Orders": [
+      {
+        "orderId": 101,
+        "orderDate": "2025-01-01",
+        "OrderDetails": [
+          {
+            "productId": 201,
+            "productName": "Widget",
+            "ProductDetails": {
+              "productId": 201,
+              "productName": "Widget",
+              "price": 19.99
+            }
+          }
+        ]
+      },
+      {
+        "orderId": 102,
+        "orderDate": "2025-01-02",
+        "OrderDetails": [
+          {
+            "productId": 202,
+            "productName": "Gadget",
+            "ProductDetails": {
+              "productId": 202,
+              "productName": "Gadget",
+              "price": 29.99
+            }
+          }
+        ]
+      }
+    ],
+    "Connections": [
+      {
+        "connectedCustomerId": 2,
+        "connectionType": "Friend"
+      }
+    ]
+  },
+  {
+    "customerId": 2,
+    "customerName": "John Doe",
+    "Orders": [
+      {
+        "orderId": 103,
+        "orderDate": "2025-01-03",
+        "OrderDetails": [
+          {
+            "productId": 203,
+            "productName": "Thingamajig",
+            "ProductDetails": {
+              "productId": 203,
+              "productName": "Thingamajig",
+              "price": 39.99
+            }
+          }
+        ]
+      }
+    ],
+    "Connections": [
+      {
+        "connectedCustomerId": 3,
+        "connectionType": "Referral"
+      }
+    ]
+  },
+  {
+    "customerId": 3,
+    "customerName": "Alice Johnson",
+    "Orders": [],
+    "Connections": [
+      {
+        "connectedCustomerId": 1,
+        "connectionType": "Friend"
+      }
+    ]
+  }
+]

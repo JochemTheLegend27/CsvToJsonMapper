@@ -1,5 +1,11 @@
 using CsvToJsonWithMapping.Models;
 using CsvToJsonWithMapping.Enums;
+using System.Text.Json;
+using System.Diagnostics;
+using System.Text;
+using System.Security.Cryptography;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.ComponentModel.Design;
 
 namespace CsvToJsonWithMapping.Services
 {
@@ -7,6 +13,11 @@ namespace CsvToJsonWithMapping.Services
     {
         private int _totalFields = 0;
         private int _processedFields = 0;
+
+        private int _currentRecord = 0;
+        private string _currentRecordValue = string.Empty;
+        private string? _recordFieldName = null;
+        private string? _recordFileName = null;
 
         private readonly FieldValidationService _fieldValidationService;
 
@@ -18,31 +29,83 @@ namespace CsvToJsonWithMapping.Services
         public List<Dictionary<string, object?>> GenerateJsonFromMappings(Mapping mapping, List<Relation> relations, Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData, Dictionary<string, IEnumerable<IDictionary<string, object>>> joinedData)
         {
             _processedFields = 0;
+
+            var resultJson = new List<Dictionary<string, object?>>();
+
+            var (count, usedCsvFile, usedCsvField) = GetRecordCount(mapping, csvData, relations);
+
             _totalFields = mapping.Fields.Count();
             mapping.NestedFields.ForEach(x =>
             {
                 _totalFields += x.Fields.Count();
                 _totalFields += x.NestedFields.Count();
             });
+            _totalFields *= count;
 
-            var resultJson = new List<Dictionary<string, object?>>();
+            for (var i = 0; i < Math.Max(count, 1); i++)
+            {
+                _currentRecord = i;
+                _recordFieldName = usedCsvField;
+                _recordFileName = usedCsvFile;
 
-            var count = 0;
-            var jsonObject = new Dictionary<string, object?>();
+                _currentRecordValue = !string.IsNullOrEmpty(_recordFileName) && !string.IsNullOrEmpty(_recordFieldName) && csvData.ContainsKey(_recordFileName)
+                     ? csvData[_recordFileName]
+                         .ElementAtOrDefault(_currentRecord)?[_recordFieldName] ?? string.Empty
+                     : string.Empty;
 
-            ProcessFieldMappings(mapping.Fields, csvData, count, jsonObject);
-            ProcessNestedFieldMappings(mapping.NestedFields, relations, csvData, joinedData, count, jsonObject);
+                var jsonObject = new Dictionary<string, object?>();
 
-            resultJson.Add(jsonObject);
+                ProcessFieldMappings(mapping.Fields, csvData, jsonObject);
+                ProcessNestedFieldMappings(mapping.NestedFields, relations, csvData, joinedData, jsonObject);
+
+                resultJson.Add(jsonObject);
+            }
 
             return resultJson;
         }
 
-        private void ProcessFieldMappings(
-            List<FieldMapping> fields,
-            Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData,
-            int count,
-            Dictionary<string, object?> jsonObject)
+        internal (int Count, string? CsvFile, string? CsvField) GetRecordCount(Mapping mapping, Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData, List<Relation> relations)
+        {
+            var fieldsWithFiles = mapping.Fields.Select(field => new { field.CSVFile, field.CSVField }).ToList();
+
+            if (!fieldsWithFiles.Any())
+            {
+                return (0, null, null);
+            }
+
+            foreach (var field in fieldsWithFiles)
+            {
+                var matchingRelation = relations.FirstOrDefault(rel =>
+                    rel.PrimaryKey.CSVFileName == field.CSVFile && rel.PrimaryKey.CSVField == field.CSVField);
+
+                if (matchingRelation != null)
+                {
+                    var primaryKeyField = matchingRelation.PrimaryKey.CSVField;
+                    var csvFileName = matchingRelation.PrimaryKey.CSVFileName;
+
+                    if (csvData.ContainsKey(csvFileName))
+                    {
+                        var count = csvData[csvFileName]
+                            .Select(record => record.ContainsKey(primaryKeyField) ? record[primaryKeyField] : null)
+                            .Distinct()
+                            .Count();
+
+                        return (count, csvFileName, primaryKeyField);
+                    }
+                }
+            }
+
+            var primaryCsvFile = fieldsWithFiles.FirstOrDefault()?.CSVFile;
+            if (primaryCsvFile == null)
+            {
+                return (0, null, null);
+            }
+            var fallbackCount = csvData[primaryCsvFile].Count();
+            return (fallbackCount, primaryCsvFile, null);
+        }
+
+
+        private void ProcessFieldMappings(List<FieldMapping> fields, Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData, Dictionary<string, object?> jsonObject)
         {
             foreach (var field in fields)
             {
@@ -67,16 +130,16 @@ namespace CsvToJsonWithMapping.Services
                 }
 
                 var currentCsvData = csvData[field.CSVFile];
-                var record = currentCsvData.Skip(count).FirstOrDefault();
+                var record = currentCsvData.Skip(_currentRecord).FirstOrDefault();
 
                 if (record == null)
                 {
-                    throw new Exception($"Record at index {count} not found in CSV file '{field.CSVFile}'.");
+                    throw new Exception($"Record at index {_currentRecord} not found in CSV file '{field.CSVFile}'.");
                 }
 
                 if (!record.TryGetValue(field.CSVField, out var value))
                 {
-                    throw new Exception($"Field '{field.CSVField}' not found in record at index {count} in file '{field.CSVFile}'.");
+                    throw new Exception($"Field '{field.CSVField}' not found in record at index {_currentRecord} in file '{field.CSVFile}'.");
                 }
 
                 var validatedValue = _fieldValidationService.ProcessFieldValidation(value, field);
@@ -84,14 +147,14 @@ namespace CsvToJsonWithMapping.Services
             }
         }
 
-        private void ProcessNestedFieldMappings(List<NestedMapping> nestedMappings, List<Relation> relations, Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData, Dictionary<string, IEnumerable<IDictionary<string, object>>> joinedData, int count, Dictionary<string, object?> jsonObject)
+        private void ProcessNestedFieldMappings(List<NestedMapping> nestedMappings, List<Relation> relations, Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData, Dictionary<string, IEnumerable<IDictionary<string, object>>> joinedData, Dictionary<string, object?> jsonObject)
         {
             foreach (var nestedField in nestedMappings)
             {
 
                 if (Enum.Parse<NestedType>(nestedField.JSONNestedType) == NestedType.Object)
                 {
-                    ProcessObjectTypeFields(nestedField, csvData, count, jsonObject);
+                    ProcessObjectTypeFields(nestedField, csvData, jsonObject);
                 }
                 else if (Enum.Parse<NestedType>(nestedField.JSONNestedType) == NestedType.Array)
                 {
@@ -104,11 +167,7 @@ namespace CsvToJsonWithMapping.Services
             }
         }
 
-        private void ProcessObjectTypeFields(
-            NestedMapping nestedField,
-            Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData,
-            int count,
-            Dictionary<string, object?> jsonObject)
+        private void ProcessObjectTypeFields(NestedMapping nestedField, Dictionary<string, IEnumerable<IDictionary<string, string?>>> csvData, Dictionary<string, object?> jsonObject)
         {
             var jsonObjectNested = new Dictionary<string, object?>();
 
@@ -131,16 +190,16 @@ namespace CsvToJsonWithMapping.Services
                     }
 
                     var currentCsvData = csvData[field.CSVFile];
-                    var record = currentCsvData.Skip(count).FirstOrDefault();
+                    var record = currentCsvData.Skip(_currentRecord).FirstOrDefault();
 
                     if (record == null)
                     {
-                        throw new Exception($"Record at index {count} not found in CSV file '{field.CSVFile}'.");
+                        throw new Exception($"Record at index {_currentRecord} not found in CSV file '{field.CSVFile}'.");
                     }
 
                     if (!record.TryGetValue(field.CSVField, out var value))
                     {
-                        throw new Exception($"Field '{field.CSVField}' not found in record at index {count} in file '{field.CSVFile}'.");
+                        throw new Exception($"Field '{field.CSVField}' not found in record at index {_currentRecord} in file '{field.CSVFile}'.");
                     }
 
                     var validatedValue = _fieldValidationService.ProcessFieldValidation(value, field);
@@ -255,7 +314,7 @@ namespace CsvToJsonWithMapping.Services
                         continue;
                     }
 
-                    var fileData = (record[field.CSVFile] as IEnumerable<IDictionary<string, string>>)?.FirstOrDefault();
+                    var fileData = (record[field.CSVFile] as IEnumerable<IDictionary<string, string>>) ?? null;
 
                     if (fileData == null)
                     {
@@ -264,35 +323,59 @@ namespace CsvToJsonWithMapping.Services
                         continue;
                     }
 
-                    if (!fileData.ContainsKey(field.CSVField))
+                    if (fileData != null && !fileData.Any(dict => dict.ContainsKey(field.CSVField)))
                     {
                         LogPublisher.PublishLogMessage("Warning: CSVData - Missing Field",
                             $"Warning: The field '{field.CSVField}' was not found in the data for CSV file '{field.CSVFile}'. Verify that the field exists and is correctly named.");
                         continue;
                     }
 
-                    var existingKey = pkToJsonMapping.Keys.FirstOrDefault(pkDict => pkDict.ContainsValue(primaryKeyValue) && pkDict.ContainsKey(correctRelation.PrimaryKey.CSVFileName));
-                    var value = _fieldValidationService.ProcessFieldValidation(fileData[field.CSVField], field);
-
-                    if (existingKey != null)
+                    if (_recordFileName == correctRelation.PrimaryKey.CSVFileName && _currentRecordValue != primaryKeyValue)
                     {
-                        var existingJson = pkToJsonMapping[existingKey];
+                        continue;
+                    }
 
-                        if (existingJson.ContainsKey(field.JSONField))
+                    var keyBase = $"{correctRelation.PrimaryKey.CSVFileName}";
+                    var processedKeys = new HashSet<string>();
+
+                    foreach (var data in fileData)
+                    {
+                        string key;
+                        int index = 0;
+
+                        // Generate a unique key by appending an index if necessary
+                        do
                         {
-                            existingJson[field.JSONField] = value;
+                            key = index == 0 ? keyBase : $"{keyBase}_{index}";
+                            index++;
+                        } while (processedKeys.Contains(key));
+
+                        processedKeys.Add(key);
+
+                        var existingKey = pkToJsonMapping.Keys.FirstOrDefault(pkDict => pkDict.ContainsKey(key) && pkDict.ContainsValue(primaryKeyValue));
+
+                        var value = _fieldValidationService.ProcessFieldValidation(data[field.CSVField], field);
+
+                        if (existingKey != null)
+                        {
+                            var existingJson = pkToJsonMapping[existingKey];
+
+                            if (existingJson.ContainsKey(field.JSONField))
+                            {
+                                existingJson[field.JSONField] = existingJson[field.JSONField] + " " + value;
+                            }
+                            else
+                            {
+                                existingJson.Add(field.JSONField, value);
+                            }
                         }
                         else
                         {
-                            existingJson.Add(field.JSONField, value);
-                        }
-                    }
-                    else
-                    {
-                        var jsonObjectNested = new Dictionary<string, object?>();
-                        jsonObjectNested[field.JSONField] = value;
+                            var jsonObjectNested = new Dictionary<string, object?>();
+                            jsonObjectNested[field.JSONField] = value;
 
-                        pkToJsonMapping[new Dictionary<string, string> { { correctRelation.PrimaryKey.CSVFileName, primaryKeyValue } }] = jsonObjectNested;
+                            pkToJsonMapping[new Dictionary<string, string> { { key, primaryKeyValue } }] = jsonObjectNested;
+                        }
                     }
                 }
             }
@@ -339,15 +422,26 @@ namespace CsvToJsonWithMapping.Services
 
                     if (primaryKeyValue == null)
                     {
-                        throw new Exception($"No primary key value found for '{correctRelation.PrimaryKey.CSVField}' in file '{correctRelation.PrimaryKey.CSVFileName}'.");
+                        LogPublisher.PublishLogMessage("Warning: CSVData - Missing Primary Key",
+                            $"Warning: The primary key value for '{correctRelation.PrimaryKey.CSVField}' is missing in the current record from the file '{field.CSVFile}'.");
+                        continue;
                     }
 
                     if (!fileData.ContainsKey(field.CSVField))
                     {
-                        throw new Exception($"No data found for ' {field.CSVField} ' in joined record.");
+                        LogPublisher.PublishLogMessage("Warning: CSVData - Missing Field",
+                            $"Warning: The field '{field.CSVField}' was not found in the data for CSV file '{field.CSVFile}'. Verify that the field exists and is correctly named.");
+                        continue;
                     }
 
-                    var existingKey = pkToJsonMapping.Keys.FirstOrDefault(pkDict => pkDict.ContainsKey(correctRelation.PrimaryKey.CSVFileName) && pkDict.ContainsValue(primaryKeyValue));
+                    if (_recordFileName == correctRelation.PrimaryKey.CSVFileName && _currentRecordValue != primaryKeyValue)
+                    {
+                        continue;
+                    }
+
+                    var key = $"{correctRelation.PrimaryKey.CSVFileName}";
+
+                    var existingKey = pkToJsonMapping.Keys.FirstOrDefault(pkDict => pkDict.ContainsKey(key) && pkDict.ContainsValue(primaryKeyValue));
                     var value = _fieldValidationService.ProcessFieldValidation(fileData[field.CSVField].ToString(), field);
 
                     if (existingKey != null)
@@ -368,7 +462,7 @@ namespace CsvToJsonWithMapping.Services
                         var jsonObjectNested = new Dictionary<string, object?>();
                         jsonObjectNested[field.JSONField] = value;
 
-                        pkToJsonMapping[new Dictionary<string, string> { { correctRelation.PrimaryKey.CSVFileName, primaryKeyValue } }] = jsonObjectNested;
+                        pkToJsonMapping[new Dictionary<string, string> { { key, primaryKeyValue } }] = jsonObjectNested;
                     }
                 }
             }
@@ -436,6 +530,8 @@ namespace CsvToJsonWithMapping.Services
         {
             if (nestedField.NestedFields.Count > 0)
             {
+                LogPublisher.PublishLogMessage("Warning: Nested Fields - Unsupported",
+                       $"Warning: Nested fields in nested fields are not supported. Nested field '{nestedField.JSONNestedFieldName}' will be empty.");
                 foreach (var nested in nestedField.NestedFields)
                 {
                     ProgressField();

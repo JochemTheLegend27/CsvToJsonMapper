@@ -5,9 +5,9 @@ VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvToJsonWithMapping", "CsvToJsonWithMapping.csproj", "{C655C1C0-DAA2-4ED3-9654-02972A574D69}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvToJsonWithMapping.Tests", "..\CsvToJsonWithMapping.Tests\CsvToJsonWithMapping.Tests.csproj", "{D79FD33A-E4EF-4883-934E-BFAEF95FBAB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvToJsonWithMapping.AlgorithmTests", "..\CsvToJsonWithMapping.AlgorithmTests\CsvToJsonWithMapping.AlgorithmTests.csproj", "{019EDB5D-00E2-40AC-9E70-2DDD53E21674}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvToJsonWithMapping.AlgorithmTests", "..\CsvToJsonWithMapping.E2ETests\CsvToJsonWithMapping.AlgorithmTests.csproj", "{8EE1A41A-8716-4DF4-AEF0-AF58F879D64E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvToJsonWithMapping.Tests", "..\CsvToJsonWithMapping.Tests\CsvToJsonWithMapping.Tests.csproj", "{CF27F26A-6115-4043-BB81-4034DF7A07DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{C655C1C0-DAA2-4ED3-9654-02972A574D69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C655C1C0-DAA2-4ED3-9654-02972A574D69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C655C1C0-DAA2-4ED3-9654-02972A574D69}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D79FD33A-E4EF-4883-934E-BFAEF95FBAB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D79FD33A-E4EF-4883-934E-BFAEF95FBAB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D79FD33A-E4EF-4883-934E-BFAEF95FBAB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D79FD33A-E4EF-4883-934E-BFAEF95FBAB8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8EE1A41A-8716-4DF4-AEF0-AF58F879D64E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8EE1A41A-8716-4DF4-AEF0-AF58F879D64E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8EE1A41A-8716-4DF4-AEF0-AF58F879D64E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8EE1A41A-8716-4DF4-AEF0-AF58F879D64E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{019EDB5D-00E2-40AC-9E70-2DDD53E21674}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{019EDB5D-00E2-40AC-9E70-2DDD53E21674}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{019EDB5D-00E2-40AC-9E70-2DDD53E21674}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{019EDB5D-00E2-40AC-9E70-2DDD53E21674}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF27F26A-6115-4043-BB81-4034DF7A07DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF27F26A-6115-4043-BB81-4034DF7A07DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF27F26A-6115-4043-BB81-4034DF7A07DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF27F26A-6115-4043-BB81-4034DF7A07DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

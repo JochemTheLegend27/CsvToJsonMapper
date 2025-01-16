@@ -7,7 +7,7 @@
       {
         "Name": "Sunny Farm",
         "Country": "USA",
-        "EmployeeCount": "12"
+        "EmployeeCount": 12
       }
     ],
     "Products": [
@@ -41,7 +41,7 @@
       {
         "Name": "Green Acres",
         "Country": "Canada",
-        "EmployeeCount": "10"
+        "EmployeeCount": 10
       }
     ],
     "Products": [
@@ -66,7 +66,7 @@
       {
         "Name": "Mountain Ridge",
         "Country": "USA",
-        "EmployeeCount": "8"
+        "EmployeeCount": 8
       }
     ],
     "Products": [
@@ -91,7 +91,7 @@
       {
         "Name": "Riverside Farms",
         "Country": "Netherlands",
-        "EmployeeCount": "15"
+        "EmployeeCount": 15
       }
     ],
     "Products": [

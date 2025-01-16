@@ -72,7 +72,7 @@
           "JSONField": "EmployeeCount",
           "Validations": {
             "Required": true,
-            "Type": "String",
+            "Type": "Int",
             "Min": null,
             "Max": null
           }

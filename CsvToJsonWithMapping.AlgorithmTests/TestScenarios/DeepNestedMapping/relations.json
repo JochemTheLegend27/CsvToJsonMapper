@@ -1,0 +1,42 @@
+[
+  {
+    "PrimaryKey": {
+      "CSVFileName": "Customers.csv",
+      "CSVField": "CustomerID"
+    },
+    "ForeignKey": {
+      "CSVFileName": "Orders.csv",
+      "CSVField": "CustomerID"
+    }
+  },
+  {
+    "PrimaryKey": {
+      "CSVFileName": "Orders.csv",
+      "CSVField": "ID"
+    },
+    "ForeignKey": {
+      "CSVFileName": "OrderDetails.csv",
+      "CSVField": "OrderID"
+    }
+  },
+  {
+    "PrimaryKey": {
+      "CSVFileName": "OrderDetails.csv",
+      "CSVField": "ProductID"
+    },
+    "ForeignKey": {
+      "CSVFileName": "Products.csv",
+      "CSVField": "ProductID"
+    }
+  },
+  {
+    "PrimaryKey": {
+      "CSVFileName": "Customers.csv",
+      "CSVField": "CustomerID"
+    },
+    "ForeignKey": {
+      "CSVFileName": "Connections.csv",
+      "CSVField": "CustomerID"
+    }
+  }
+]

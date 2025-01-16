@@ -1,0 +1,53 @@
+[
+  {
+    "customerId": "1",
+    "customerName": "Jane Smith",
+    "Orders": [
+      {
+        "orderId": "101",
+        "orderDate": "2025-01-01",
+        "OrderDetails": []
+      },
+      {
+        "orderId": "102",
+        "orderDate": "2025-01-02",
+        "OrderDetails": []
+      }
+    ],
+    "Connections": [
+      {
+        "connectedCustomerId": "2",
+        "connectionType": "Friend"
+      }
+    ]
+  },
+  {
+    "customerId": "2",
+    "customerName": "John Doe",
+    "Orders": [
+      {
+        "orderId": "103",
+        "orderDate": "2025-01-03",
+        "OrderDetails": []
+      }
+    ],
+    "Connections": [
+      {
+        "connectedCustomerId": "3",
+        "connectionType": "Referral"
+      }
+    ]
+  },
+  {
+    "customerId": "3",
+    "customerName": "Alice Johnson",
+    "Orders": [],
+    "Connections": [
+      {
+        "connectedCustomerId": "1",
+        "connectionType": "Friend"
+      }
+    ]
+  }
+]
+

@@ -1,0 +1,84 @@
+{
+  "Customers.csv": [
+    {
+      "CustomerID": "1",
+      "Name": "Jane Smith"
+    },
+    {
+      "CustomerID": "2",
+      "Name": "John Doe"
+    },
+    {
+      "CustomerID": "3",
+      "Name": "Alice Johnson"
+    }
+  ],
+  "Orders.csv": [
+    {
+      "ID": "101",
+      "CustomerID": "1",
+      "Date": "2025-01-01"
+    },
+    {
+      "ID": "102",
+      "CustomerID": "1",
+      "Date": "2025-01-02"
+    },
+    {
+      "ID": "103",
+      "CustomerID": "2",
+      "Date": "2025-01-03"
+    }
+  ],
+  "OrderDetails.csv": [
+    {
+      "OrderID": "101",
+      "ProductID": "201",
+      "Product": "Widget"
+    },
+    {
+      "OrderID": "102",
+      "ProductID": "202",
+      "Product": "Gadget"
+    },
+    {
+      "OrderID": "103",
+      "ProductID": "203",
+      "Product": "Thingamajig"
+    }
+  ],
+  "Products.csv": [
+    {
+      "ProductID": "201",
+      "Name": "Widget",
+      "Price": "19.99"
+    },
+    {
+      "ProductID": "202",
+      "Name": "Gadget",
+      "Price": "29.99"
+    },
+    {
+      "ProductID": "203",
+      "Name": "Thingamajig",
+      "Price": "39.99"
+    }
+  ],
+  "Connections.csv": [
+    {
+      "CustomerID": "1",
+      "ConnectedCustomerID": "2",
+      "ConnectionType": "Friend"
+    },
+    {
+      "CustomerID": "2",
+      "ConnectedCustomerID": "3",
+      "ConnectionType": "Referral"
+    },
+    {
+      "CustomerID": "3",
+      "ConnectedCustomerID": "1",
+      "ConnectionType": "Friend"
+    }
+  ]
+}

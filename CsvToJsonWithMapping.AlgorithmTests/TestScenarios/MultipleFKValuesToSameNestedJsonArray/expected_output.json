@@ -1,0 +1,31 @@
+[
+  {
+    "orderId": 3,
+    "customerName": "John Doe",
+    "OrderDetails": [
+      {
+        "orderId": 3,
+        "productName": "Gadget"
+      }
+    ]
+  },
+  {
+    "orderId": 1,
+    "customerName": "Jane Smith",
+    "OrderDetails": [
+      {
+        "orderId": 1,
+        "productName": "Widget"
+      },
+      {
+        "orderId": 1,
+        "productName": "Thingamajig"
+      }
+    ]
+  },
+  {
+    "orderId": 2,
+    "customerName": "William Smith",
+    "OrderDetails": []
+  }
+]

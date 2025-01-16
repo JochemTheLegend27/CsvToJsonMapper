@@ -1,0 +1,30 @@
+{
+  "Orders.csv": [
+    {
+      "ID": "3",
+      "Customer": "John Doe"
+    },
+    {
+      "ID": "1",
+      "Customer": "Jane Smith"
+    },
+    {
+      "ID": "2",
+      "Customer": "William Smith"
+    }
+  ],
+  "OrderDetails.csv": [
+    {
+      "OrderID": "1",
+      "Product": "Widget"
+    },
+    {
+      "OrderID": "3",
+      "Product": "Gadget"
+    },
+    {
+      "OrderID": "1",
+      "Product": "Thingamajig"
+    }
+  ]
+}

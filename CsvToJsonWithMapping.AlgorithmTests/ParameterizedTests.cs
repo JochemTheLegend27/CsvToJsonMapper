@@ -9,7 +9,7 @@ namespace CsvToJsonWithMapping.AlgorithmTests
     {
         [Theory]
         [MemberData(nameof(GetTestScenarios))]
-        public void TestEndToEndFlow(string relationsPath, string mappingPath, string csvDataPath, string expectedOutputPath)
+        public void AlgorithmFlow(string relationsPath, string mappingPath, string csvDataPath, string expectedOutputPath)
         {
             var mockFieldValidationService = new Mock<FieldValidationService>();
 

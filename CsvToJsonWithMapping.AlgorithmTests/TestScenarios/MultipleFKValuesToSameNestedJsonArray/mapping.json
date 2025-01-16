@@ -1,0 +1,51 @@
+{
+  "Fields": [
+    {
+      "CSVField": "ID",
+      "CSVFile": "Orders.csv",
+      "JSONField": "orderId",
+      "Validations": {
+        "Required": true,
+        "Type": "int",
+        "Min": 1,
+        "Max": 9999
+      }
+    },
+    {
+      "CSVField": "Customer",
+      "CSVFile": "Orders.csv",
+      "JSONField": "customerName",
+      "Validations": {
+        "Required": true,
+        "Type": "string",
+        "Min": 3,
+        "Max": 50
+      }
+    }
+  ],
+  "NestedFields": [
+    {
+      "JSONNestedFieldName": "OrderDetails",
+      "JSONNestedType": "Array",
+      "Fields": [
+        {
+          "CSVField": "OrderID",
+          "CSVFile": "OrderDetails.csv",
+          "JSONField": "orderId",
+          "Validations": {
+            "Required": true,
+            "Type": "int",
+            "Min": 1,
+            "Max": 9999
+          }
+        },
+        {
+          "CSVField": "Product",
+          "CSVFile": "OrderDetails.csv",
+          "JSONField": "productName"
+        }
+      ]
+    }
+  ]
+}
+

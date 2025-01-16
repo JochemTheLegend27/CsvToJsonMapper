@@ -29,7 +29,6 @@ class Program
         try
         {
             await csvProcessorService.ProcessCsvFilesAsync(csvFilesDirectory, mappingsFilePath, relationsFilePath, outputJsonPath);
-
             var logs = logService.GetLogs();
 
             var groupedLogs = GroupLogs(logs);
@@ -45,7 +44,7 @@ class Program
 
     private static void HandleProgressUpdated(double progress, LoggingService logService)
     {
-        Console.WriteLine($"{logService.GetProgress()}% completed");
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {Math.Round(progress)}% completed");
     }
 
     private static Dictionary<string, Dictionary<string, int>> GroupLogs(Dictionary<string, List<string>> logs)
@@ -71,6 +70,8 @@ class Program
     {
         try
         {
+            Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Writing logs to file");
+
             var sb = new StringBuilder();
             sb.AppendLine("LogType,LogMessage,OccurrenceCount");
 
@@ -83,11 +84,11 @@ class Program
             }
 
             File.WriteAllText(filePath, sb.ToString());
-            Console.WriteLine($"Logs written to {filePath}");
+            Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Logs written successfully");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Failed to write logs to {filePath}: {ex.Message}");
+            Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Failed to write logs: {ex.Message}");
         }
     }
 }

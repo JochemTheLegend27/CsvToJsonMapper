@@ -55,7 +55,7 @@ The `CSVProcessorService` serves as the entry point for the flow:
 6. Writes the output to a JSON file using `JsonWriterService`.
 
 ### 2. **CsvDataJoinerService**
-The `CsvDataJoinerService` is a component that links related data from multiple CSV files using relationships defined in the configuration. This ensures that records from different CSV files with matching keys are combined into enriched records, ready for JSON conversion.
+The `CsvDataJoinerService` is a component that links related data from multiple CSV files using relationships defined in the `relations.json`. This ensures that records from different CSV files with matching keys are combined into enriched records, ready for JSON conversion.
 
 #### **Purpose**
 - **Data Enrichment**: Enhances the primary records by appending related data from other files.
@@ -132,7 +132,7 @@ The `CsvDataJoinerService` processes the input data through several steps:
     };
     ```    
 
-4. **Join Data**:
+**Step 4: Join Data**:
    - Iterate over records in the primary CSV file:
      - Extract the PK value for each record.
      - Use the FK lookup to find related records from the foreign CSV file.
@@ -154,12 +154,12 @@ The `CsvDataJoinerService` processes the input data through several steps:
        }
        ```
 
-5. **Handle Missing Relations**:
+**Step 5: Handle Missing Relations**:
    - For primary records with no matching foreign records:
      - Add the primary record to the result with an empty list for the related foreign file.
    - Log warnings about unmatched records for debugging.
 
-6. **Finalize Result**:
+**Step 6L: Finalize Result**:
    - Compile the enriched records into a dictionary with the primary CSV file as the key.
    - **Example**:
      ```csharp
@@ -324,41 +324,76 @@ The `JsonGeneratorService` is a core component designed to convert CSV data into
 {
   "Fields": [
     {
-      "CSVField": "Name",
-      "CSVFile": "Users.csv",
-      "JSONField": "userName",
+      "CSVField": "ID",
+      "CSVFile": "Orders.csv",
+      "JSONField": "orderId",
       "Validations": {
         "Required": true,
-        "Type": "String",
+        "Type": "int",
         "Min": 1,
+        "Max": 9999
+      }
+    },
+    {
+      "CSVField": "Customer",
+      "CSVFile": "Orders.csv",
+      "JSONField": "customerName",
+      "Validations": {
+        "Required": true,
+        "Type": "string",
+        "Min": 3,
         "Max": 50
       }
     }
   ],
   "NestedFields": [
     {
-      "JSONNestedFieldName": "Address",
-      "JSONNestedType": "Object",
+      "JSONNestedFieldName": "OrderDetails",
+      "JSONNestedType": "Array",
       "Fields": [
         {
-          "CSVField": "Street",
-          "CSVFile": "Users.csv",
-          "JSONField": "street"
+          "CSVField": "OrderID",
+          "CSVFile": "OrderDetails.csv",
+          "JSONField": "orderId"
+        },
+        {
+          "CSVField": "Product",
+          "CSVFile": "OrderDetails.csv",
+          "JSONField": "productName"
         }
       ]
     }
   ]
 }
+
 ```
 
 **Generated JSON Output**
 ```json
 [
   {
-    "userName": "John Doe",
-    "Address": {
-      "street": "123 Main St"
-    }
+    "orderId": 1,
+    "customerName": "John Doe",
+    "OrderDetails": [
+      {
+        "orderId": 1,
+        "productName": "Widget"
+      },
+      {
+        "orderId": 1,
+        "productName": "Gadget"
+      }
+    ]
+  },
+  {
+    "orderId": 2,
+    "customerName": "Jane Smith",
+    "OrderDetails": [
+      {
+        "orderId": 2,
+        "productName": "Thingamajig"
+      }
+    ]
   }
 ]
 ```
@@ -405,7 +440,7 @@ The service applies a series of validation rules to each field:
   - Example:
     ```json
     {
-      "CSVField": "OrderID",
+      "CSVField": "ID",
       "CSVFile": "Orders.csv",
       "JSONField": "OrderId",
       "Validations": {
@@ -521,8 +556,8 @@ Tracks progress and logs events during the process:
              "Orders.csv",
              new List<Dictionary<string, string?>>
              {
-                 new() { { "OrderID", "1" }, { "Customer", "John Doe" } },
-                 new() { { "OrderID", "2" }, { "Customer", "Jane Smith" } }
+                 new() { { "ID", "1" }, { "Customer", "John Doe" } },
+                 new() { { "ID", "2" }, { "Customer", "Jane Smith" } }
              }
          }
      };
@@ -548,7 +583,7 @@ Tracks progress and logs events during the process:
              {
                  new()
                  {
-                     { "OrderID", "1" },
+                     { "ID", "1" },
                      { "Customer", "John Doe" },
                      { "OrderDetails.csv", new List<Dictionary<string, object?>>
                          {
